@@ -1,0 +1,19 @@
+version: 0.0
+os: linux
+files:
+  - source: ROOT.war
+    destination: /tmp/codedeploy-deployment-staging-area/
+  - source: scripts/ApplicationDeploy
+    destination: /tmp/codedeploy-deployment-staging-area/
+permissions:
+  - object: /tmp/codedeploy-deployment-staging-area/ApplicationDeploy
+    mode: 744
+    type:
+    - file
+hooks:
+  BeforeInstall:
+  - location: hooks/BeforeInstall
+    timeout: 300
+  ApplicationStart:
+  - location: hooks/ApplicationStart
+    timeout: 300
