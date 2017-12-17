@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="FATAL">
+	<Appenders>
+		<RollingFile
+			name="file"
+			fileName="/var/log/jleague/jleague-backend-api.log"
+			filePattern="/var/log/jleague/jleague-backend-api.log.%i">
+			<PatternLayout>
+				<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSSZ} [%-5level] [%t] %logger{36} - %msg%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<SizeBasedTriggeringPolicy size="100 MB"/>
+			</Policies>
+			<DefaultRolloverStrategy max="5"/>
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<root level="info">
+			<appender-ref ref="file" />
+		</root>
+		<Logger name="com.amazonaws.http.AmazonHttpClient" level="warn" />
+		<Logger name="MySQL" level="error" />
+		<Logger name="org.apache.commons.dbcp2.BasicDataSource" level="error" />
+		<Logger name="jp.jleague" level="debug" />
+	</Loggers>
+</Configuration>
