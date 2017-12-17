@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.IMePushConfReadDAO">
+
+	<resultMap id="IMePushConfDTO" type="jp.jleague.club.api.dao.masterdb.dto.IMePushConfDTO">
+		<result javaType="java.lang.String" property="memberId" column="member_id"/>
+		<result javaType="java.lang.Integer" property="newsCampaignOtherFlg" column="news_campaign_other_flg"/>
+		<result javaType="java.lang.Integer" property="bonusCheckinFlg" column="bonus_checkin_flg"/>
+		<result javaType="java.lang.Integer" property="stadiumCheckinFlg" column="stadium_checkin_flg"/>
+		<result javaType="java.util.Date" property="registDatetime" column="regist_datetime"/>
+		<result javaType="java.util.Date" property="updateDatetime" column="update_datetime"/>
+	</resultMap>
+
+	<select id="selectIMePushConfByMemberId" parameterType="java.lang.String" resultMap="IMePushConfDTO">
+		select
+			member_id,
+			news_campaign_other_flg,
+			bonus_checkin_flg,
+			stadium_checkin_flg,
+			regist_datetime,
+			update_datetime
+		from i_me_push_conf
+		where member_id = #{memberId}
+	</select>
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.IAwWinningLogicReadDAO">
+
+	<resultMap type="jp.jleague.club.api.dao.masterdb.dto.IAwWinningLogicDTO" id="dto">
+		<result column="awards_winning_logic_id" property="awardsWinningLogicId" javaType="java.lang.Integer" />
+		<result column="awards_event_id" property="awardsEventId" javaType="java.lang.Integer" />
+		<result column="seat_type" property="seatType" javaType="java.lang.String" />
+		<result column="club_id" property="clubId" javaType="java.lang.String" />
+		<result column="branch_number" property="branchNumber" javaType="java.lang.Integer" />
+		<result column="winning_probability_id" property="winningProbabilityId" javaType="java.lang.Integer" />
+		<result column="winning_start_date" property="winningStartDate" javaType="java.util.Date" />
+		<result column="winning_end_date" property="winningEndDate" javaType="java.util.Date" />
+		<result column="period_winning_provision_num" property="periodWinningProvisionNum" javaType="java.lang.Integer" />
+		<result column="period_ticket_num" property="periodTicketNum" javaType="java.lang.Integer" />
+		<result column="regist_datetime" property="registDatetime" javaType="java.util.Date" />
+		<result column="update_datetime" property="updateDatetime" javaType="java.util.Date" />
+		<result column="winning_probability" property="winningProbability" javaType="java.math.BigDecimal" />
+	</resultMap>
+
+	<select id="selectOneNow" resultMap="dto" parameterType="java.util.Map">
+		select
+			  logic.awards_winning_logic_id
+			, now_event.awards_event_id
+			, logic.seat_type
+			, logic.club_id
+			, logic.branch_number
+			, logic.winning_probability_id
+			, logic.winning_start_date
+			, logic.winning_end_date
+			, logic.period_winning_provision_num
+			, logic.period_ticket_num
+			, logic.regist_datetime
+			, logic.update_datetime
+			, logic.winning_probability
+		from 
+		(
+			select
+				awards_event_id
+			from i_aw_event
+			where applicant_section_type = #{sectionType}
+			and receptionist_start_datetime <![CDATA[<=]]> #{now}
+			and receptionist_end_datetime >= #{now}
+		) now_event
+		left join
+		(
+			select
+				  wl.awards_winning_logic_id
+				, wl.awards_event_id
+				, wl.seat_type
+				, wl.club_id
+				, wl.branch_number
+				, wl.winning_probability_id
+				, wl.winning_start_date
+				, wl.winning_end_date
+				, wl.period_winning_provision_num
+				, wl.period_ticket_num
+				, wl.regist_datetime
+				, wl.update_datetime
+				, mw.winning_probability
+			from i_aw_winning_logic wl
+			inner join m_aw_winning_probability mw
+			on wl.winning_probability_id = mw.winning_probability_id
+			where wl.seat_type = #{seatType}
+			<if test="clubIdConditions != null">
+			and wl.club_id = #{clubId}
+			</if>
+			and wl.winning_start_date <![CDATA[<=]]> #{now}
+			and wl.winning_end_date >= #{now}
+		) logic
+		on now_event.awards_event_id = logic.awards_event_id
+	</select>
+
+</mapper>

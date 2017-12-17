@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.MRankReadDAO">
+
+	<resultMap type="jp.jleague.club.api.dao.masterdb.dto.MRankDTO" id="MRankDTO">
+		<result column="rank_id" property="rankId" javaType="java.lang.Integer" />
+		<result column="rank_name" property="rankName" javaType="java.lang.String" />
+		<result column="star_lower_limit" property="starLowerLimit" javaType="java.lang.Integer" />
+		<result column="star_upper_limit" property="starUpperLimit" javaType="java.lang.Integer" />
+		<result column="regist_datetime" property="registDatetime" javaType="java.util.Date" />
+	</resultMap>
+
+	<select id="selectRankdetail" parameterType="int" resultMap="MRankDTO">
+		select
+			rank_id,
+			rank_name,
+			star_lower_limit,
+			star_upper_limit,
+			regist_datetime
+		from m_rank
+		where rank_id = #{rankId}
+	</select>
+
+	<select id="selectNextRank" parameterType="int" resultMap="MRankDTO">
+		select
+			rank_id,
+			rank_name
+		from
+			m_rank
+		where
+			<![CDATA[ star_lower_limit <= #{starNum} ]]>
+		order by star_lower_limit desc
+		limit 1
+	</select>
+
+	<select id="selectMaxRank" resultMap="MRankDTO">
+		select
+			rank_id,
+			rank_name,
+			star_lower_limit,
+			star_upper_limit,
+			regist_datetime
+		from m_rank
+		where rank_id = (select max(rank_id) from m_rank)
+	</select>
+
+</mapper>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.IJcJchallengeTicketReadDAO">
+
+	<resultMap id="BaseResultMap" type="jp.jleague.club.api.dao.masterdb.dto.IJchallengeTicketDTO">
+		<id column="jc_ticket_serial_number" javaType="java.lang.Integer" property="jcTicketSerialNumber" />
+		<result column="game_id" javaType="java.lang.String" property="gameId" />
+		<result column="pia_campaign_code" javaType="java.lang.String" property="piaCampaignCode" />
+		<result column="pia_campaign_name" javaType="java.lang.String" property="piaCampaignName" />
+		<result column="pia_serial_id" javaType="java.lang.String" property="piaSerialId" />
+		<result column="for_purchase_url" javaType="java.lang.String" property="forPurchaseUrl" />
+		<result column="receptionist_start_datetime" javaType="java.util.Date" property="receptionistStartDatetime" />
+		<result column="receptionist_end_datetime" javaType="java.util.Date" property="receptionistEndDatetime" />
+		<result column="file_record_make_datetime" javaType="java.util.Date" property="fileRecordMakeDatetime" />
+		<result column="promo_code" javaType="java.lang.String" property="promoCode" />
+		<result column="promo_code_get_member_id" javaType="java.lang.String" property="promoCodeGetMemberId" />
+		<result column="promo_code_issue_datetime" javaType="java.util.Date" property="promoCodeIssueDatetime" />
+		<result column="promo_code_use_limit_date" javaType="java.util.Date" property="promoCodeUseLimitDate" />
+		<result column="promo_code_use_member_id" javaType="java.lang.String" property="promoCodeUseMemberId" />
+		<result column="promo_code_use_datetime" javaType="java.util.Date" property="promoCodeUseDatetime" />
+		<result column="jchallenge_ticket_status" property="jchallengeTicketStatus" />
+		<result column="acceptance_kind_id" javaType="java.lang.Integer" property="acceptanceKindId" />
+		<result column="acceptance_name" javaType="java.lang.String" property="acceptanceName" />
+		<result column="acceptance_postal_code" javaType="java.lang.String" property="acceptancePostalCode" />
+		<result column="acceptance_address_1" javaType="java.lang.String" property="acceptanceAddress1" />
+		<result column="acceptance_address_2" javaType="java.lang.String" property="acceptanceAddress2" />
+		<result column="acceptance_tel" javaType="java.lang.String" property="acceptanceTel" />
+		<result column="acceptance_seat_type" javaType="java.lang.String" property="acceptanceSeatType" />
+		<result column="ticket_provider" javaType="java.lang.String" property="ticketProvider" />
+		<result column="delete_flg" javaType="java.lang.Integer" property="deleteFlg" />
+		<result column="pickup_flg" javaType="java.lang.Integer" property="pickupFlg" />
+		<result column="regist_datetime" javaType="java.util.Date" property="registDatetime" />
+		<result column="update_datetime" javaType="java.util.Date" property="updateDatetime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		 jc_ticket_serial_number
+		,game_id
+		,pia_campaign_code
+		,pia_campaign_name
+		,pia_serial_id
+		,for_purchase_url
+		,receptionist_start_datetime
+		,receptionist_end_datetime
+		,file_record_make_datetime
+		,promo_code
+		,promo_code_get_member_id
+		,promo_code_issue_datetime
+		,promo_code_use_limit_date
+		,promo_code_use_member_id
+		,promo_code_use_datetime
+		,jchallenge_ticket_status
+		,acceptance_kind_id
+		,acceptance_name
+		,acceptance_postal_code
+		,acceptance_address_1
+		,acceptance_address_2
+		,acceptance_tel
+		,acceptance_seat_type
+		,ticket_provider
+		,delete_flg
+		,pickup_flg
+		,regist_datetime
+		,update_datetime
+	</sql>
+
+	<select id="selectListByStatus" parameterType="jp.jleague.club.api.dao.masterdb.dto.enums.JchallengeTicketStatusType" resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from
+			i_jc_jchallenge_ticket
+		where
+			jchallenge_ticket_status = #{jchallengeTicketStatusType,typeHandler=jp.jleague.club.api.dao.masterdb.dto.enums.EnumIdTypeHandler}
+		and delete_flg = 0
+	</select>
+
+	<select id="selectListByAvailableJChallenge" parameterType="Map" resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from
+			i_jc_jchallenge_ticket
+		where delete_flg = 0
+		and receptionist_start_datetime <![CDATA[<=]]> #{executeDate}
+		and receptionist_end_datetime <![CDATA[>=]]> #{executeDatePlus24Hour}
+		order by pickup_flg DESC
+	</select>
+	
+	<select id="selectPromoCode" resultType="java.lang.Integer">
+	select
+		count(*)
+	from
+		i_jc_jchallenge_ticket
+	where
+		    promo_code_get_member_id  = #{promoCodeGetMemberId}
+		and promo_code_use_limit_date > #{promoCodeUseLimitDate}
+		and promo_code_use_member_id is null
+	</select>
+
+	<select id="selectReceptionistEndDatetime" resultType="java.util.Date">
+	select
+		receptionist_end_datetime
+	from
+		i_jc_jchallenge_ticket
+	where
+		game_id  = #{gameId}
+	and
+		pickup_flg = #{pickupFlg}
+	limit 1
+	</select>
+
+	<select id="selectGameIdAndAcceptanceName" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from
+			i_jc_jchallenge_ticket
+		where
+			promo_code = #{promotionCode}
+	</select>
+
+	<select id="selectHaveTicketCheck" resultMap="BaseResultMap" >
+		select
+			 t1.jc_ticket_serial_number
+			,t1.game_id
+			,t1.pia_campaign_code
+			,t1.pia_campaign_name
+			,t1.pia_serial_id
+			,t1.for_purchase_url
+			,t1.receptionist_start_datetime
+			,t1.receptionist_end_datetime
+			,t1.file_record_make_datetime
+			,t1.promo_code
+			,t1.promo_code_get_member_id
+			,t1.promo_code_issue_datetime
+			,t1.promo_code_use_limit_date
+			,t1.promo_code_use_member_id
+			,t1.promo_code_use_datetime
+			,t1.jchallenge_ticket_status
+			,t1.acceptance_kind_id
+			,t1.acceptance_name
+			,t1.acceptance_postal_code
+			,t1.acceptance_address_1
+			,t1.acceptance_address_2
+			,t1.acceptance_tel
+			,t1.acceptance_seat_type
+			,t1.ticket_provider
+			,t1.delete_flg
+			,t1.regist_datetime
+			,t1.update_datetime
+		from
+			i_jc_jchallenge_ticket as t1
+			inner join
+				i_gm_schedule as t2 on  t1.game_id = t2.game_id
+		where
+				t1.promo_code_use_member_id = #{memberId}
+			and t1.acceptance_kind_id in(2,3)
+			and t1.jchallenge_ticket_status = #{ticketStatus}
+			and t1.promo_code_use_limit_date >= #{current}
+			and DATE_FORMAT(t2.game_start_datetime,'%Y/%m/%d %k%i') >= DATE_FORMAT(#{current},'%Y/%m/%d %k%i');
+	</select>
+
+</mapper>

@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.IGmScheduleReadDAO">
+
+	<resultMap type="jp.jleague.club.api.dao.masterdb.dto.IGmScheduleDTO" id="IGmScheduleDTO">
+		<result column="game_id" property="gameId" javaType="java.lang.String" />
+		<result column="game_kind_id" property="gameKindId" javaType="java.lang.Integer" />
+		<result column="year" property="year" javaType="java.lang.Integer" />
+		<result column="season_id" property="seasonId" javaType="java.lang.Integer" />
+		<result column="game_start_datetime" property="gameStartDatetime" javaType="java.util.Date" />
+		<result column="section" property="section" javaType="java.lang.Integer" />
+		<result column="venue_code" property="venueCode" javaType="java.lang.String" />
+		<result column="home_club_id" property="homeClubId" javaType="java.lang.String" />
+		<result column="away_club_id" property="awayClubId" javaType="java.lang.String" />
+		<result column="details_url" property="detailsUrl" javaType="java.lang.String" />
+		<result column="sale_url" property="saleUrl" javaType="java.lang.String" />
+		<result column="entertainer_id" property="entertainerId" javaType="java.lang.String" />
+		<result column="regist_datetime" property="registDatetime" javaType="java.util.Date" />
+		<result column="update_datetime" property="updateDatetime" javaType="java.util.Date" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		 game_id
+		,game_kind_id
+		,year
+		,season_id
+		,game_start_datetime
+		,section
+		,venue_code
+		,home_club_id
+		,away_club_id
+		,details_url
+		,sale_url
+		,entertainer_id
+		,regist_datetime
+		,update_datetime
+	</sql>
+
+	<select id="selectByGameDateToday" resultMap="IGmScheduleDTO" parameterType="jp.jleague.club.api.dao.masterdb.dto.IGmScheduleDTO">
+		select game_id ,
+		       game_kind_id ,
+		       year ,
+		       season_id ,
+		       game_start_datetime ,
+		       section ,
+		       venue_code ,
+		       home_club_id ,
+		       away_club_id ,
+		       details_url ,
+		       sale_url ,
+		       entertainer_id ,
+		       regist_datetime ,
+		       update_datetime
+		  from i_gm_schedule
+	     where game_start_datetime >= #{startDatetime}
+	       and game_start_datetime <![CDATA[<]]> #{endDatetime}
+         order by game_id, game_kind_id
+	</select>
+
+	<select id="selectByStadiumIdGameKindIdJoinMStadium" resultMap="IGmScheduleDTO" parameterType="java.util.Map">
+		select sch.game_id ,
+		       sch.game_kind_id ,
+		       sch.year ,
+		       sch.season_id ,
+		       sch.game_start_datetime ,
+		       sch.section ,
+		       sch.venue_code ,
+		       sch.home_club_id ,
+		       sch.away_club_id ,
+		       sch.sale_url ,
+		       sch.entertainer_id ,
+		       sch.regist_datetime ,
+		       sch.update_datetime
+          from i_gm_schedule as sch
+    inner join m_stadium as sm
+			on sch.venue_code = sm.venue_code
+		   and sm.venue_code = #{venueCode}
+	     where sch.game_start_datetime >= #{startDatetime}
+	       and sch.game_start_datetime <![CDATA[<]]> #{endDatetime}
+		<if test="gameKindIdList != null">
+		   and sch.game_kind_id in
+			<foreach item="item" collection="gameKindIdList" open="(" separator="," close=")">
+			   #{item}
+			</foreach>
+		</if>
+	  order by sch.game_id, sch.game_kind_id
+	</select>
+
+	<select id="selectListByGameId" resultMap="IGmScheduleDTO" parameterType="java.lang.String">
+		select
+			<include refid="Base_Column_List" />
+		from
+			i_gm_schedule
+		where
+			game_id = #{gameId}
+	</select>
+
+	<select id="selectListByGameIdGameKindIdList" resultMap="IGmScheduleDTO" parameterType="java.util.Map">
+		select
+			<include refid="Base_Column_List" />
+		from
+			i_gm_schedule
+		where
+			game_id = #{gameId}
+		<if test="gameKindIdList != null">
+			and game_kind_id in
+			<foreach item="item" collection="gameKindIdList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+
+	<select id="selectByGameId" resultMap="IGmScheduleDTO" parameterType="java.lang.String">
+		select
+			<include refid="Base_Column_List" />
+		from i_gm_schedule
+		where game_id = #{gameId}
+	</select>
+
+	<select id="selectMatchesByClubId" resultMap="IGmScheduleDTO" parameterType="jp.jleague.club.api.dao.masterdb.dto.IGmScheduleDTO">
+		select game_id ,
+		       game_kind_id ,
+		       year ,
+		       season_id ,
+		       game_start_datetime ,
+		       section ,
+		       venue_code ,
+		       home_club_id ,
+		       away_club_id ,
+		       details_url ,
+		       sale_url ,
+		       entertainer_id ,
+		       regist_datetime ,
+		       update_datetime
+		  from i_gm_schedule
+		 where (home_club_id = #{homeClubId}
+			or away_club_id = #{awayClubId})
+		   and game_start_datetime >= #{gameStartDatetime}
+		   and sale_url is not null
+		   and DATE_FORMAT(game_start_datetime, '%T') != '00:00:00'
+	  order by game_start_datetime
+	</select>
+
+	<select id="selectRecentlyMatchByClubCode" resultMap="IGmScheduleDTO" parameterType="java.util.Map">
+		select game_id ,
+		       game_kind_id ,
+		       year ,
+		       season_id ,
+		       game_start_datetime ,
+		       section ,
+		       venue_code ,
+		       home_club_id ,
+		       away_club_id ,
+		       details_url ,
+		       sale_url ,
+		       entertainer_id ,
+		       regist_datetime ,
+		       update_datetime
+		  from i_gm_schedule
+		 where (home_club_id = #{clubCode} or away_club_id = #{clubCode})
+		   and (
+		        (CAST(game_start_datetime AS DATE) <![CDATA[<=]]> DATE_SUB( CAST(#{now} AS DATE) ,INTERVAL 1 DAY ))
+		        or (CAST(game_start_datetime AS DATE) = CAST(#{now} AS DATE)
+		             and game_start_datetime <![CDATA[<=]]> #{now} + INTERVAL 90 MINUTE
+		        )
+		       )
+	  order by game_start_datetime desc
+	     limit 1
+	</select>
+
+	<select id="selectNextMatchByClubCode" resultMap="IGmScheduleDTO" parameterType="java.util.Map">
+		select game_id ,
+		       game_kind_id ,
+		       year ,
+		       season_id ,
+		       game_start_datetime ,
+		       section ,
+		       venue_code ,
+		       home_club_id ,
+		       away_club_id ,
+		       details_url ,
+		       sale_url ,
+		       entertainer_id ,
+		       regist_datetime ,
+		       update_datetime
+		  from i_gm_schedule
+		 where (home_club_id = #{clubCode} or away_club_id = #{clubCode})
+		   and (
+		        (CAST(game_start_datetime AS DATE) <![CDATA[>]]> CAST(#{now} AS DATE))
+		        or (CAST(game_start_datetime AS DATE) = CAST(#{now} AS DATE)
+		             and game_start_datetime <![CDATA[>]]> #{now} + INTERVAL 90 MINUTE
+		        )
+		       )
+		   and sale_url is not null
+	  order by game_start_datetime
+	     limit 1
+	</select>
+
+	<select id="selectByVenueCodeGameKindIdListToday" resultMap="IGmScheduleDTO" parameterType="java.util.Map">
+		select
+			<include refid="Base_Column_List" />
+		from
+			i_gm_schedule
+		where
+			venue_code = #{venueCode}
+		and
+			game_start_datetime >= #{startDatetime}
+		and
+			game_start_datetime <![CDATA[<]]> #{endDatetime}
+		<if test="gameKindIdList != null">
+		and
+			game_kind_id in
+			<foreach item="item" collection="gameKindIdList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		order by game_id, game_kind_id
+	</select>
+
+	<select id="selectByGameKindIdListToday" resultMap="IGmScheduleDTO" parameterType="java.util.Map">
+		select
+			<include refid="Base_Column_List" />
+		from
+			i_gm_schedule
+		where
+			game_start_datetime >= #{startDatetime}
+		and
+			game_start_datetime <![CDATA[<]]> #{endDatetime}
+		<if test="gameKindIdList != null">
+		and
+			game_kind_id in
+			<foreach item="item" collection="gameKindIdList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		order by game_id, game_kind_id
+	</select>
+
+</mapper>

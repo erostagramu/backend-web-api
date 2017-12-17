@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.MStadiumReadDAO">
+
+	<resultMap type="jp.jleague.club.api.dao.masterdb.dto.MStadiumDTO" id="MStadiumDTO">
+		<result column="venue_code" property="venueCode" javaType="java.lang.String" />
+		<result column="stadium_name" property="stadiumName" javaType="java.lang.String" />
+		<result column="stadium_name_roughly" property="stadiumNameRoughly" javaType="java.lang.String" />
+		<result column="stadium_latitude" property="stadiumLatitude" javaType="java.lang.String" />
+		<result column="studium_longitude" property="studiumLongitude" javaType="java.lang.String" />
+		<result column="stadium_geohash" property="stadiumGeohash" javaType="java.lang.String" />
+		<result column="stadium_checkin_radius" property="stadiumCheckinRadius" javaType="java.lang.Integer" />
+		<result column="stadium_geofence_geohash" property="stadiumGeofenceGeohash" javaType="java.lang.String" />
+		<result column="stadium_geofence_radius" property="stadiumGeofenceRadius" javaType="java.lang.Integer" />
+		<result column="regist_datetime" property="registDatetime" javaType="java.util.Date" />
+	</resultMap>
+
+	<select id="selectByVenueCode" resultMap="MStadiumDTO" parameterType="jp.jleague.club.api.dao.masterdb.dto.MStadiumDTO">
+		select venue_code ,
+		       stadium_name ,
+		       stadium_name_roughly ,
+		       stadium_latitude ,
+		       studium_longitude ,
+		       stadium_geohash ,
+		       stadium_checkin_radius ,
+		       stadium_geofence_geohash ,
+		       stadium_geofence_radius ,
+		       regist_datetime
+		from m_stadium
+		where venue_code = #{venueCode}
+	</select>
+</mapper>

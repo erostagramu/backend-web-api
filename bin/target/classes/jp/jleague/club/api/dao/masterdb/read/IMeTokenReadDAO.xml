@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.IMeTokenReadDAO">
+<resultMap id="IMeTokenDTO" type="jp.jleague.club.api.dao.masterdb.dto.IMeTokenDTO">
+
+<result javaType="java.lang.String" property="memberId" column="member_id"/>
+<result javaType="java.lang.String" property="accessToken" column="access_token"/>
+<result javaType="java.lang.String" property="refleshToken" column="reflesh_token"/>
+<result javaType="java.util.Date" property="registDatetime" column="regist_datetime"/>
+<result javaType="java.util.Date" property="updateDatetime" column="update_datetime"/>
+
+</resultMap>
+
+<select id="selectListByAccessToken" parameterType="jp.jleague.club.api.dao.masterdb.dto.IMeTokenDTO" resultMap="IMeTokenDTO">
+	select 
+		member_id,
+		access_token,
+		reflesh_token,
+		regist_datetime,
+		update_datetime
+	from i_me_token
+	where access_token = #{accessToken} 
+
+</select>
+<select id="selectListByKey" parameterType="jp.jleague.club.api.dao.masterdb.dto.IMeTokenDTO" resultMap="IMeTokenDTO">
+	select 
+		member_id,
+		access_token,
+		reflesh_token,
+		regist_datetime,
+		update_datetime
+	from i_me_token
+	where member_id = #{memberId} 
+
+</select>
+
+</mapper> 

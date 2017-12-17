@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.MClubMenuReadDAO">
+	
+	<resultMap type="jp.jleague.club.api.dao.masterdb.dto.MClubMenuDTO" id="MClubMenuDTO">
+		<result column="menu_id" property="menuId" javaType="java.lang.Integer" />
+		<result column="game_kind_id" property="gameKindId" javaType="java.lang.Integer" />
+		<result column="game_kind_name" property="gameKindName" javaType="java.lang.String" />
+		<result column="club_id" property="clubId" javaType="java.lang.String" />
+		<result column="club_name" property="clubName" javaType="java.lang.String" />
+		<result column="menu_name_1" property="menuName1" javaType="java.lang.String" />
+		<result column="menu_url_1" property="menuUrl1" javaType="java.lang.String" />
+		<result column="nondisplay_flg_1" property="nondisplayFlg1" javaType="java.lang.Integer" />
+		<result column="menu_name_2" property="menuName2" javaType="java.lang.String" />
+		<result column="menu_url_2" property="menuUrl2" javaType="java.lang.String" />
+		<result column="nondisplay_flg_2" property="nondisplayFlg2" javaType="java.lang.Integer" />
+		<result column="menu_name_3" property="menuName3" javaType="java.lang.String" />
+		<result column="menu_url_3" property="menuUrl3" javaType="java.lang.String" />
+		<result column="nondisplay_flg_3" property="nondisplayFlg3" javaType="java.lang.Integer" />
+		<result column="regist_datetime" property="registDatetime" javaType="java.util.Date" />
+	</resultMap>
+	
+	<select id="selectByClubId" resultMap="MClubMenuDTO">
+		select menu_id
+		     , game_kind_id
+		     , game_kind_name
+		     , club_id
+		     , club_name
+		     , menu_name_1
+		     , menu_url_1
+		     , nondisplay_flg_1
+		     , menu_name_2
+		     , menu_url_2
+		     , nondisplay_flg_2
+		     , menu_name_3
+		     , menu_url_3
+		     , nondisplay_flg_3
+		     , regist_datetime
+		from m_club_menu
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="clubId != null">and club_id = #{clubId}</if>
+			<if test="clubIds != null">and club_id in <foreach collection="clubIds" item="clubId" open="(" close=")" separator=", ">#{clubId}</foreach></if>
+		</trim>
+		order by menu_id
+	</select>
+	
+</mapper> 

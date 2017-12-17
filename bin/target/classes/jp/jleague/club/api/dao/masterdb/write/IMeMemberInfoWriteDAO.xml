@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.IMeMemberInfoWriteDAO">
+
+<resultMap id="IMeMemberInfoDTO" type="jp.jleague.club.api.dao.masterdb.dto.IMeMemberInfoDTO">
+<result javaType="java.lang.String" property="memberId" column="member_id"/>
+<result javaType="java.lang.String" property="jleagueId" column="jleague_id"/>
+<result javaType="java.lang.String" property="mailAddress" column="mail_address"/>
+<result javaType="java.lang.Byte" property="sex" column="sex"/>
+<result javaType="java.lang.String" property="prefectures" column="prefectures"/>
+<result javaType="java.util.Date" property="birthday" column="birthday"/>
+<result javaType="java.lang.Byte" property="memberType" column="member_type"/>
+<result javaType="java.lang.Byte" property="formerMemberType" column="former_member_type"/>
+<result javaType="java.lang.Byte" property="memberStatus" column="member_status"/>
+<result javaType="java.util.Date" property="registDatetime" column="regist_datetime"/>
+<result javaType="java.util.Date" property="updateDatetime" column="update_datetime"/>
+<result javaType="java.lang.Byte" property="influxSource" column="influx_source"/>
+</resultMap>
+
+<insert id="insert" parameterType="jp.jleague.club.api.dao.masterdb.dto.IMeMemberInfoDTO" >
+insert into i_me_member_info
+(
+	member_id,
+	jleague_id,
+	mail_address,
+	sex,
+	prefectures,
+	birthday,
+	member_type,
+	former_member_type,
+	member_status,
+	regist_datetime,
+	update_datetime
+)
+values
+(
+	#{memberId},
+	#{jleagueId},
+	#{mailAddress},
+	#{sex},
+	#{prefectures},
+	#{birthday},
+	#{memberType},
+	#{formerMemberType},
+	#{memberStatus},
+	#{registDatetime},
+	#{updateDatetime}
+)
+</insert>
+
+<update id="update" parameterType="jp.jleague.club.api.dao.masterdb.dto.IMeMemberInfoDTO" >
+update i_me_member_info
+set
+	member_id = #{memberId},
+	jleague_id = #{jleagueId},
+	mail_address = #{mailAddress},
+	sex = #{sex},
+	prefectures = #{prefectures},
+	birthday = #{birthday},
+	member_type = #{memberType},
+	former_member_type = #{formerMemberType},
+	update_datetime = #{updateDatetime}
+where member_id = #{memberId}
+</update>
+
+<delete id="delete" parameterType="jp.jleague.club.api.dao.masterdb.dto.IMeMemberInfoDTO">
+	delete from i_me_member_info where member_id = #{memberId}
+</delete>
+
+<select id="selectByMemberId" parameterType="java.lang.String" resultMap="IMeMemberInfoDTO">
+select
+	member_id,
+    jleague_id,
+    mail_address,
+    sex,
+    prefectures,
+    birthday,
+    member_type,
+    former_member_type,
+    member_status,
+    influx_source,
+    regist_datetime,
+    update_datetime
+from i_me_member_info
+where member_id = #{memberId}
+</select>
+
+<update id="updateFormerMemberType" parameterType="jp.jleague.club.api.dao.masterdb.dto.IMeMemberInfoDTO" >
+update i_me_member_info
+set
+	former_member_type = #{formerMemberType},
+	update_datetime = #{updateDatetime}
+where member_id = #{memberId}
+</update>
+
+<update id="updateInfluxSourceJchare">
+	update
+		i_me_member_info
+	set
+		 influx_source = #{influxSource}
+		,update_datetime = #{updateDatetime}
+	where
+		member_id = #{memberId};
+</update>
+
+</mapper>

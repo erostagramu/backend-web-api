@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.IJchallengeWinningLogicReadDAO">
+
+<resultMap id="IJchallengeWinningLogicDTO" type="jp.jleague.club.api.dao.masterdb.dto.IJchallengeWinningLogicDTO">
+	<result column="game_id" javaType="java.lang.String" property="gameId" />
+	<result column="branch_number" javaType="java.lang.Integer" property="branchNumber" />
+	<result column="winning_start_date" javaType="java.util.Date" property="winningStartDate" />
+	<result column="winning_end_date" javaType="java.util.Date" property="winningEndDate" />
+	<result column="period_winning_provision_num" javaType="java.lang.Integer" property="periodWinningProvisionNum" />
+	<result column="period_ticket_num" javaType="java.lang.Integer" property="periodTicketNum" />
+	<result column="winning_probability_id" javaType="java.lang.Integer" property="winningProbabilityId" />
+	<result column="delete_flg" javaType="java.lang.Integer" property="deleteFlg" />
+	<result column="regist_datetime" javaType="java.util.Date" property="registDatetime" />
+	<result column="update_datetime" javaType="java.util.Date" property="updateDatetime" />
+</resultMap>
+
+<select id="selectTicketByGameId"   resultMap="IJchallengeWinningLogicDTO">
+select 
+	game_id,
+	branch_number,
+	winning_start_date,
+	winning_end_date,
+	period_winning_provision_num,
+	period_ticket_num,
+	winning_probability_id,
+	delete_flg,
+	regist_datetime,
+	update_datetime
+from
+	i_jc_winning_logic
+where
+	game_id = #{gameId}
+AND
+	pickup_flg = #{pickupFlg}
+ORDER BY 
+	branch_number
+; 
+</select>
+
+</mapper> 

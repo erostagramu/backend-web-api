@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.MClubReadDAO">
+
+	<resultMap type="jp.jleague.club.api.dao.masterdb.dto.MClubDTO" id="MClubDTO">
+		<result column="club_id" property="clubId" javaType="java.lang.String" />
+		<result column="team_id" property="teamId" javaType="java.lang.Integer" />
+		<result column="game_kind_id" property="gameKindId" javaType="java.lang.Integer" />
+		<result column="club_name" property="clubName" javaType="java.lang.String" />
+		<result column="club_name_roughly" property="clubNameRoughly" javaType="java.lang.String" />
+		<result column="color" property="color" javaType="java.lang.String" />
+		<result column="logo_img_path" property="logoImgPath" javaType="java.lang.String" />
+		<result column="text_color" property="textColor" javaType="java.lang.String" />
+		<result column="row_order" property="rowOrder" javaType="java.lang.Integer" />
+		<result column="regist_datetime" property="registDatetime" javaType="java.util.Date" />
+	</resultMap>
+
+	<select id="selectByGameKindId" resultMap="MClubDTO" parameterType="jp.jleague.club.api.dao.masterdb.dto.MClubDTO">
+		select club_id
+		     , team_id
+		     , game_kind_id
+		     , club_name
+		     , club_name_roughly
+		     , color
+		     , logo_img_path
+		     , text_color
+		     , row_order
+		     , regist_datetime
+		from m_club
+		where game_kind_id = #{gameKindId}
+		order by row_order asc
+	</select>
+
+	<select id="selectByClubId" resultMap="MClubDTO" parameterType="java.util.Map">
+		select club_id
+		     , team_id
+		     , game_kind_id
+		     , club_name
+		     , club_name_roughly
+		     , color
+		     , logo_img_path
+		     , text_color
+		     , row_order
+		     , regist_datetime
+		from m_club
+		<trim prefix="where" prefixOverrides="and |or ">
+			<if test="clubId != null">and club_id = #{clubId}</if>
+			<if test="clubIds != null">and club_id in <foreach collection="clubIds" item="clubId" open="(" close=")" separator=", ">#{clubId}</foreach></if>
+		</trim>
+	</select>
+
+	<select id="selectAll" resultMap="MClubDTO" parameterType="jp.jleague.club.api.dao.masterdb.dto.MClubDTO">
+		select club_id
+		     , team_id
+		     , game_kind_id
+		     , club_name
+		     , club_name_roughly
+		     , color
+		     , logo_img_path
+		     , text_color
+		     , row_order
+		     , regist_datetime
+		from m_club
+		order by row_order asc
+	</select>
+
+	<select id="selectByTeamId" resultMap="MClubDTO" >
+		SELECT club_id
+		     , team_id
+		     , game_kind_id
+		     , club_name
+		     , club_name_roughly
+		     , color
+		     , logo_img_path
+		     , text_color
+		     , row_order
+		     , regist_datetime
+		FROM
+			m_club
+		WHERE
+			team_id = #{teamId}
+		;
+	</select>
+
+</mapper>

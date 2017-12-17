@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.MAeonReadDAO">
+
+	<resultMap type="jp.jleague.club.api.dao.masterdb.dto.MAeonDTO" id="MAeonDTO">
+		<result column="aeon_id" property="aeonId" javaType="java.lang.String" />
+		<result column="aeon_store_name" property="aeonStoreName" javaType="java.lang.String" />
+		<result column="aeon_store_type_id" property="aeonStoreTypeId" javaType="java.lang.Integer" />
+		<result column="aeon_adress" property="aeonAdress" javaType="java.lang.String" />
+		<result column="aeon_prefecture" property="aeonPrefecture" javaType="java.lang.String" />
+		<result column="aeon_latitude" property="aeonLatitude" javaType="java.lang.String" />
+		<result column="aeon_longitude" property="aeonLongitude" javaType="java.lang.String" />
+		<result column="aeon_geohash" property="aeonGeohash" javaType="java.lang.String" />
+		<result column="aeon_checkin_radius" property="aeonCheckinRadius" javaType="java.lang.Integer" />
+		<result column="aeon_geofence_radius" property="aeonGeofenceRadius" javaType="java.lang.Integer" />
+		<result column="regist_datetime" property="registDatetime" javaType="java.util.Date" />
+	</resultMap>
+
+	<select id="selectAllOrderById" resultMap="MAeonDTO">
+		select aeon_id
+		     , aeon_store_name
+		     , aeon_store_type_id
+		     , aeon_adress
+		     , aeon_prefecture
+		     , aeon_latitude
+		     , aeon_longitude
+		     , aeon_geohash
+		     , aeon_checkin_radius
+		     , aeon_geofence_radius
+		     , regist_datetime
+		from m_aeon
+		order by aeon_id
+	</select>
+
+	<select id="selectByStoreId" resultMap="MAeonDTO" parameterType="java.lang.String">
+		select aeon_id
+		     , aeon_store_name
+		     , aeon_store_type_id
+		     , aeon_adress
+		     , aeon_prefecture
+		     , aeon_latitude
+		     , aeon_longitude
+		     , aeon_geohash
+		     , aeon_checkin_radius
+		     , aeon_geofence_radius
+		     , regist_datetime
+		from m_aeon
+		where aeon_id = #{storeId}
+	</select>
+</mapper>

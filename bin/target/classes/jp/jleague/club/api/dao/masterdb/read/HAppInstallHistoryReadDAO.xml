@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.HAppInstallHistoryReadDAO">
+
+<resultMap id="HAppInstallHistoryDTO" type="jp.jleague.club.api.dao.masterdb.dto.HAppInstallHistoryDTO">
+<result javaType="java.lang.Integer" property="appInstallSerialNumber" column="app_install_serial_number"/>
+<result javaType="java.lang.String" property="memberId" column="member_id"/>
+<result javaType="java.lang.Integer" property="year" column="year"/>
+<result javaType="java.util.Date" property="occurDate" column="occur_date"/>
+<result javaType="java.util.Date" property="occurDatetime" column="occur_datetime"/>
+<result javaType="java.lang.String" property="os" column="os"/>
+<result javaType="java.util.Date" property="registDatetime" column="regist_datetime"/>
+</resultMap>
+
+
+</mapper> 

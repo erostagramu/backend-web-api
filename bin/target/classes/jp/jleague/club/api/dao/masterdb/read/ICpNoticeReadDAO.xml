@@ -1,0 +1,924 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.ICpNoticeReadDAO">
+
+	<resultMap type="jp.jleague.club.api.dao.masterdb.dto.CampaignAvailabilityDTO" id="ICpNoticeDTO">
+		<id column="cp_notice_id" property="cpNoticeId" />
+		<result column="cp_notice_kind" property="cpNoticeKind"  />
+		<result column="distribution_src_id" property="distributionSrcId"  />
+		<result column="disp_start_datetime" property="dispStartDatetime"  />
+		<result column="disp_end_datetime" property="dispEndDatetime" />
+		<result column="cp_notice_status" property="cpNoticeStatus" />
+		<result column="cp_winner_num" property="cpWinnerNum" />
+		<result column="push_delivery_flg" property="pushDeliveryFlg" />
+		<result column="cp_notice_title" property="cpNoticeTitle" />
+		<result column="cp_banner_img_path" property="cpBannerImgPath" />
+		<result column="transition_dest_kind" property="transitionDestKind" />
+		<result column="transition_dest_url" property="transitionDestUrl" />
+		<result column="available" property="available" />
+		<result column="regist_datetime" property="registDatetime"  />
+		<result column="update_datetime" property="updateDatetime"  />
+	</resultMap>
+
+	<resultMap type="jp.jleague.club.api.dao.masterdb.dto.ICpNoticeDTO" id="defaultICpNoticeDTO">
+		<result column="cp_notice_id" property="cpNoticeId" javaType="java.lang.Long" />
+		<result column="cp_notice_kind" property="cpNoticeKind" javaType="java.lang.Integer" />
+		<result column="distribution_src_id" property="distributionSrcId" javaType="java.lang.Long" />
+		<result column="disp_start_datetime" property="dispStartDatetime" javaType="java.util.Date" />
+		<result column="disp_end_datetime" property="dispEndDatetime" javaType="java.util.Date" />
+		<result column="cp_notice_status" property="cpNoticeStatus" javaType="java.lang.String" />
+		<result column="cp_winner_num" property="cpWinnerNum" javaType="java.lang.String" />
+		<result column="push_delivery_flg" property="pushDeliveryFlg" javaType="java.lang.Integer" />
+		<result column="cp_notice_title" property="cpNoticeTitle" javaType="java.lang.String" />
+		<result column="cp_banner_img_path" property="cpBannerImgPath" javaType="java.lang.String" />
+		<result column="transition_dest_kind" property="transitionDestKind" javaType="java.lang.Integer" />
+		<result column="transition_dest_url" property="transitionDestUrl" javaType="java.lang.String" />
+		<result column="regist_datetime" property="registDatetime" javaType="java.util.Date" />
+		<result column="update_datetime" property="updateDatetime" javaType="java.util.Date" />
+	</resultMap>
+
+	<select id="selectICpNoticeBy" resultMap="ICpNoticeDTO" >
+		SELECT
+			i_cp_notice.cp_notice_id,
+			i_cp_notice.cp_notice_kind,
+			i_cp_notice.distribution_src_id,
+			i_cp_notice.disp_start_datetime,
+			i_cp_notice.disp_end_datetime,
+			i_cp_notice.cp_notice_status,
+			i_cp_notice.cp_winner_num,
+			i_cp_notice.push_delivery_flg,
+			i_cp_notice.cp_notice_title,
+			i_cp_notice.cp_banner_img_path,
+			i_cp_notice.transition_dest_kind,
+			i_cp_notice.transition_dest_url,
+			true AS available,
+			i_cp_notice.regist_datetime,
+			i_cp_notice.update_datetime
+		FROM
+			i_cp_notice
+		INNER JOIN
+			i_cp_delivery_condition
+		ON
+			i_cp_notice.cp_notice_id = i_cp_delivery_condition.cp_notice_id
+		WHERE
+			i_cp_notice.cp_notice_status = #{iCpNoticeManageDTO.cpNoticeStatus}
+		AND
+			i_cp_notice.cp_notice_kind = #{iCpNoticeManageDTO.cpNoticeKind}
+		AND
+			#{currentDate} BETWEEN i_cp_notice.disp_start_datetime AND  i_cp_notice.disp_end_datetime
+		AND (
+				i_cp_delivery_condition.delivery_type = 1
+			OR(
+				i_cp_delivery_condition.delivery_type = 2
+				AND(
+					(
+							i_cp_delivery_condition.age_min IS NULL
+						OR
+							EXISTS(
+								SELECT
+									true
+								FROM
+									i_me_member_info
+								WHERE
+									i_me_member_info.member_id = #{memberId}
+								AND
+									<![CDATA[ i_cp_delivery_condition.age_min <= TIMESTAMPDIFF(YEAR,i_me_member_info.birthday ,#{currentDate}) ]]>
+
+							)
+					)
+					AND (
+							i_cp_delivery_condition.age_max  IS NULL
+						OR
+							EXISTS(
+								SELECT
+									true
+								FROM
+									i_me_member_info
+								WHERE
+									i_me_member_info.member_id =#{memberId}
+								AND
+									<![CDATA[ i_cp_delivery_condition.age_max  >= TIMESTAMPDIFF(YEAR,i_me_member_info.birthday ,#{currentDate}) ]]>
+
+							)
+					)
+					AND (
+							i_cp_delivery_condition.fav_club_id IS NULL
+						OR
+							EXISTS(
+								SELECT
+									true
+								FROM
+									i_me_member_info
+								LEFT OUTER JOIN
+									i_me_favorite_club
+								ON
+									i_me_member_info.member_id = i_me_favorite_club.member_id
+								WHERE
+									i_me_member_info.member_id = #{memberId}
+								AND
+									i_me_favorite_club.club_id = i_cp_delivery_condition.fav_club_id
+							)
+					)
+					AND (
+							i_cp_delivery_condition.rank_min  IS NULL
+						OR
+							EXISTS(
+								SELECT
+									true
+								FROM
+									i_me_member_info
+								INNER JOIN
+									i_bc_member_medal_status
+								ON
+									i_me_member_info.member_id = i_bc_member_medal_status.member_id
+								WHERE
+									i_me_member_info.member_id = #{memberId}
+								AND
+									<![CDATA[ i_cp_delivery_condition.rank_min  <= i_bc_member_medal_status.rank  ]]>
+						)
+					)
+					AND (
+							i_cp_delivery_condition.rank_max  IS NULL
+						OR
+							EXISTS(
+								SELECT
+									true
+								FROM
+									i_me_member_info
+								INNER JOIN
+									i_bc_member_medal_status
+								ON
+									i_me_member_info.member_id = i_bc_member_medal_status.member_id
+								WHERE
+									i_me_member_info.member_id =#{memberId}
+								AND
+									 <![CDATA[ i_cp_delivery_condition.rank_max  >= i_bc_member_medal_status.rank  ]]>
+							)
+					)
+				)
+			)OR(
+					i_cp_delivery_condition.delivery_type = 3
+				AND EXISTS(
+					SELECT
+						true
+					FROM
+						i_cp_individual
+					WHERE
+						i_cp_individual.cp_notice_id = i_cp_notice.cp_notice_id
+					AND
+						i_cp_individual.member_id =#{memberId}
+				)
+			)
+		)
+		AND (
+				i_cp_delivery_condition.check_in_flag = 0
+			OR
+				EXISTS(
+					SELECT
+						true
+					FROM
+						i_me_member_info
+					WHERE
+						i_me_member_info.member_id = #{memberId}
+					AND
+						EXISTS(
+							SELECT
+								true
+							FROM
+								h_bc_checkin
+							INNER JOIN
+								i_gm_schedule
+							ON
+								h_bc_checkin.game_id = i_gm_schedule.game_id
+							WHERE
+								h_bc_checkin.member_id = i_me_member_info.member_id
+							AND
+								i_gm_schedule.game_id = i_cp_delivery_condition.game_id
+						)
+				)
+		)
+		UNION ALL
+		SELECT
+			i_cp_notice.cp_notice_id,
+			i_cp_notice.cp_notice_kind,
+			i_cp_notice.distribution_src_id,
+			i_cp_notice.disp_start_datetime,
+			i_cp_notice.disp_end_datetime,
+			i_cp_notice.cp_notice_status,
+			i_cp_notice.cp_winner_num,
+			i_cp_notice.push_delivery_flg,
+			i_cp_notice.cp_notice_title,
+			i_cp_notice.cp_banner_img_path,
+			i_cp_notice.transition_dest_kind,
+			'' as transition_dest_url,
+			false AS available,
+			i_cp_notice.regist_datetime,
+			i_cp_notice.update_datetime
+		FROM
+			i_cp_notice
+		INNER JOIN
+			i_cp_delivery_condition
+		ON
+			i_cp_notice.cp_notice_id = i_cp_delivery_condition.cp_notice_id
+		WHERE
+			i_cp_notice.cp_notice_status = #{iCpNoticeManageDTO.cpNoticeStatus}
+		AND
+			i_cp_notice.cp_notice_kind = #{iCpNoticeManageDTO.cpNoticeKind}
+		AND
+			#{currentDate} BETWEEN i_cp_notice.disp_start_datetime AND  i_cp_notice.disp_end_datetime
+		AND (
+			i_cp_delivery_condition.delivery_type = 2
+			AND(
+				(
+						i_cp_delivery_condition.fav_club_id IS NOT NULL
+					AND
+						NOT EXISTS(
+							SELECT
+								true
+							FROM
+								i_me_member_info
+							LEFT OUTER JOIN
+								i_me_favorite_club
+							ON
+								i_me_member_info.member_id = i_me_favorite_club.member_id
+							WHERE
+								i_me_member_info.member_id = #{memberId}
+							AND (
+									i_me_favorite_club.club_id = i_cp_delivery_condition.fav_club_id
+							)
+						)
+				)
+				OR (
+						i_cp_delivery_condition.rank_min  IS NOT NULL
+					AND
+						EXISTS(
+							SELECT
+								true
+							FROM
+								i_me_member_info
+							INNER JOIN
+								i_bc_member_medal_status
+							ON
+								i_me_member_info.member_id = i_bc_member_medal_status.member_id
+							WHERE
+								i_me_member_info.member_id =#{memberId}
+							AND (
+									 <![CDATA[ i_cp_delivery_condition.rank_min  > i_bc_member_medal_status.rank  ]]>
+							)
+						)
+				)
+				OR (
+						i_cp_delivery_condition.rank_max  IS NOT NULL
+					AND
+						EXISTS(
+							SELECT
+								true
+							FROM
+								i_me_member_info
+							INNER JOIN
+								i_bc_member_medal_status
+							ON
+								i_me_member_info.member_id = i_bc_member_medal_status.member_id
+							WHERE
+								i_me_member_info.member_id = #{memberId}
+							AND (
+									 <![CDATA[ i_cp_delivery_condition.rank_max  < i_bc_member_medal_status.rank  ]]>
+							)
+						)
+				)
+			)
+			OR (
+				(
+						i_cp_delivery_condition.delivery_type = 3
+					AND
+						EXISTS(
+							SELECT
+								true
+							FROM
+								i_cp_individual
+							WHERE
+								i_cp_individual.cp_notice_id = i_cp_notice.cp_notice_id
+							AND
+								i_cp_individual.member_id =#{memberId}
+						)
+					AND
+						i_cp_delivery_condition.check_in_flag = 1
+					AND
+						NOT EXISTS(
+							SELECT
+								true
+							FROM
+								i_me_member_info
+							LEFT OUTER JOIN
+								h_bc_checkin
+							ON
+								i_me_member_info.member_id = h_bc_checkin.member_id
+							LEFT OUTER JOIN
+								i_gm_schedule
+							ON
+								h_bc_checkin.game_id = i_gm_schedule.game_id
+							WHERE
+								i_me_member_info.member_id = #{memberId}
+							AND
+								i_gm_schedule.game_id = i_cp_delivery_condition.game_id
+					)
+				)
+				OR (
+						<![CDATA[ i_cp_delivery_condition.delivery_type <> 3 ]]>
+					AND
+						i_cp_delivery_condition.check_in_flag = 1
+					AND NOT EXISTS(
+						SELECT
+							true
+						FROM
+							i_me_member_info
+						LEFT OUTER JOIN
+							h_bc_checkin
+						ON
+							i_me_member_info.member_id = h_bc_checkin.member_id
+						LEFT OUTER JOIN
+							i_gm_schedule
+						ON
+							h_bc_checkin.game_id = i_gm_schedule.game_id
+						WHERE
+							i_me_member_info.member_id = #{memberId}
+						AND
+							i_gm_schedule.game_id = i_cp_delivery_condition.game_id
+	
+					)
+				)
+			)
+		)
+		ORDER BY
+				available DESC,
+				disp_start_datetime DESC,
+				cp_notice_id DESC
+		<if test="limit != null">
+			LIMIT
+			<if test="offset != null">
+			#{offset},
+			</if>
+			#{limit}
+		</if>
+		;
+	</select>
+
+
+	<sql id="newsCampaignWhere">
+			<!-- ↓↓ 追加読み込みかつ前回読み込み時最終表示CPが応募不可の場合、応募可のCPを探さない ↓↓ -->
+			<if test="lastCPAvailable != false">
+			(
+				SELECT
+					i_cp_notice.cp_notice_id,
+					i_cp_notice.cp_notice_kind,
+					i_cp_notice.distribution_src_id,
+					i_cp_notice.disp_start_datetime,
+					i_cp_notice.disp_end_datetime,
+					i_cp_notice.cp_notice_status,
+					i_cp_notice.cp_winner_num,
+					i_cp_notice.push_delivery_flg,
+					i_cp_notice.cp_notice_title,
+					i_cp_notice.cp_banner_img_path,
+					i_cp_notice.transition_dest_kind,
+					i_cp_notice.transition_dest_url,
+					true AS available,
+					i_cp_notice.regist_datetime,
+					i_cp_notice.update_datetime
+				FROM
+					i_cp_notice
+				INNER JOIN
+					i_cp_delivery_condition
+				ON
+					i_cp_notice.cp_notice_id = i_cp_delivery_condition.cp_notice_id
+				WHERE
+					i_cp_notice.cp_notice_kind = #{iCpNoticeManageDTO.cpNoticeKind}
+				AND
+					i_cp_notice.cp_notice_status = #{iCpNoticeManageDTO.cpNoticeStatus}
+				<if test="iCpNoticeManageDTO.cpNoticeId != null">
+				<!-- 前回読み込み時最終表示CP情報取得の場合のみ -->
+				AND
+					i_cp_notice.cp_notice_id = #{iCpNoticeManageDTO.cpNoticeId}
+				</if>
+				AND
+					#{currentDate} BETWEEN i_cp_notice.disp_start_datetime AND  i_cp_notice.disp_end_datetime
+				<if test="addLoadFlg == true">
+				AND
+					<![CDATA[ i_cp_notice.disp_start_datetime <= #{iCpNoticeManageDTO.dispStartDatetime} ]]>
+				</if>
+				AND (
+						i_cp_delivery_condition.delivery_type = 1
+					OR(
+						i_cp_delivery_condition.delivery_type = 2
+						AND(
+							(
+									i_cp_delivery_condition.age_min IS NULL
+								OR
+									EXISTS(
+										SELECT
+											true
+										FROM
+											i_me_member_info
+										WHERE
+											i_me_member_info.member_id = #{memberId}
+										AND
+											<![CDATA[ i_cp_delivery_condition.age_min <= TIMESTAMPDIFF(YEAR,i_me_member_info.birthday ,#{currentDate}) ]]>
+									)
+							)
+							AND (
+									i_cp_delivery_condition.age_max  IS NULL
+								OR
+									EXISTS(
+										SELECT
+											true
+										FROM
+											i_me_member_info
+										WHERE
+											i_me_member_info.member_id =#{memberId}
+										AND
+											<![CDATA[ i_cp_delivery_condition.age_max  >= TIMESTAMPDIFF(YEAR,i_me_member_info.birthday ,#{currentDate}) ]]>
+
+									)
+							)
+							AND (
+									i_cp_delivery_condition.fav_club_id IS NULL
+								OR
+									EXISTS(
+										SELECT
+											true
+										FROM
+											i_me_member_info
+										LEFT OUTER JOIN
+											i_me_favorite_club
+										ON
+											i_me_member_info.member_id = i_me_favorite_club.member_id
+										WHERE
+											i_me_member_info.member_id = #{memberId}
+										AND
+											i_me_favorite_club.club_id = i_cp_delivery_condition.fav_club_id
+										<if test="clubId != null">
+										<!-- ニュース(クラブ毎) -->
+										AND
+											i_cp_delivery_condition.fav_club_id = #{clubId}
+										</if>
+									)
+							)
+							AND (
+									i_cp_delivery_condition.rank_min  IS NULL
+								OR
+									EXISTS(
+										SELECT
+											true
+										FROM
+											i_me_member_info
+										INNER JOIN
+											i_bc_member_medal_status
+										ON
+											i_me_member_info.member_id = i_bc_member_medal_status.member_id
+										WHERE
+											i_me_member_info.member_id = #{memberId}
+										AND
+											<![CDATA[ i_cp_delivery_condition.rank_min  <= i_bc_member_medal_status.rank  ]]>
+								)
+							)
+							AND (
+									i_cp_delivery_condition.rank_max  IS NULL
+								OR
+									EXISTS(
+										SELECT
+											true
+										FROM
+											i_me_member_info
+										INNER JOIN
+											i_bc_member_medal_status
+										ON
+											i_me_member_info.member_id = i_bc_member_medal_status.member_id
+										WHERE
+											i_me_member_info.member_id =#{memberId}
+										AND
+											 <![CDATA[ i_cp_delivery_condition.rank_max  >= i_bc_member_medal_status.rank  ]]>
+									)
+							)
+						)
+					)
+					OR (
+							i_cp_delivery_condition.delivery_type = 3
+						AND EXISTS(
+							SELECT
+								true
+							FROM
+								i_cp_individual
+							WHERE
+								i_cp_individual.cp_notice_id = i_cp_notice.cp_notice_id
+							AND
+								i_cp_individual.member_id =#{memberId}
+						)
+					)
+				)
+				AND (
+						i_cp_delivery_condition.check_in_flag = 0
+					OR
+						EXISTS(
+							SELECT
+								true
+							FROM
+								i_me_member_info
+							WHERE
+								i_me_member_info.member_id = #{memberId}
+							AND
+								EXISTS(
+									SELECT
+										true
+									FROM
+										h_bc_checkin
+									INNER JOIN
+										i_gm_schedule
+									ON
+										h_bc_checkin.game_id = i_gm_schedule.game_id
+									WHERE
+										h_bc_checkin.member_id = i_me_member_info.member_id
+									AND
+										i_gm_schedule.game_id = i_cp_delivery_condition.game_id
+								)
+						)
+				)
+				ORDER BY
+					i_cp_notice.disp_start_datetime DESC,
+					i_cp_notice.cp_notice_id DESC
+				<if test="limit != null">
+					LIMIT #{limit}
+				</if>
+			)
+			UNION ALL
+			</if>
+			<!-- ↑↑ 追加読み込みかつ前回読み込み時最終表示CPが応募不可の場合、応募可のCPを探さない ↑↑ -->
+
+			(
+				SELECT
+					i_cp_notice.cp_notice_id,
+					i_cp_notice.cp_notice_kind,
+					i_cp_notice.distribution_src_id,
+					i_cp_notice.disp_start_datetime,
+					i_cp_notice.disp_end_datetime,
+					i_cp_notice.cp_notice_status,
+					i_cp_notice.cp_winner_num,
+					i_cp_notice.push_delivery_flg,
+					i_cp_notice.cp_notice_title,
+					i_cp_notice.cp_banner_img_path,
+					i_cp_notice.transition_dest_kind,
+					'' as transition_dest_url,
+					false AS available,
+					i_cp_notice.regist_datetime,
+					i_cp_notice.update_datetime
+				FROM
+					i_cp_notice
+				INNER JOIN
+					i_cp_delivery_condition
+				ON
+					i_cp_notice.cp_notice_id = i_cp_delivery_condition.cp_notice_id
+				WHERE
+					i_cp_notice.cp_notice_kind = #{iCpNoticeManageDTO.cpNoticeKind}
+				AND
+					i_cp_notice.cp_notice_status = #{iCpNoticeManageDTO.cpNoticeStatus}
+				<if test="iCpNoticeManageDTO.cpNoticeId != null">
+				<!-- 前回読み込み時最終表示CP情報取得の場合のみ -->
+				AND
+					i_cp_notice.cp_notice_id = #{iCpNoticeManageDTO.cpNoticeId}
+				</if>
+				AND
+					#{currentDate} BETWEEN i_cp_notice.disp_start_datetime AND  i_cp_notice.disp_end_datetime
+				<if test="addLoadFlg == true and lastCPAvailable == false ">
+				AND
+					<![CDATA[ i_cp_notice.disp_start_datetime <= #{iCpNoticeManageDTO.dispStartDatetime} ]]>
+				</if>
+				AND (
+					i_cp_delivery_condition.delivery_type = 2
+					<if test="clubId != null">
+					AND (
+							i_cp_delivery_condition.fav_club_id IS NULL
+						OR
+							EXISTS(
+								SELECT
+									true
+								FROM
+									i_me_member_info
+								LEFT OUTER JOIN
+									i_me_favorite_club
+								ON
+									i_me_member_info.member_id = i_me_favorite_club.member_id
+								WHERE
+									i_me_member_info.member_id = #{memberId}
+								AND (
+										i_me_favorite_club.club_id = i_cp_delivery_condition.fav_club_id
+								)
+								AND
+									i_cp_delivery_condition.fav_club_id = #{clubId}
+							)
+					)
+					</if>
+					AND(
+						<!-- ↓↓ ニュースクラブ毎の場合、お気に入りクラブ限定（応募不可）のCPを探さない ↓↓ -->
+						<if test="clubId == null">
+						(
+								i_cp_delivery_condition.fav_club_id IS NOT NULL
+							AND
+								NOT EXISTS(
+									SELECT
+										true
+									FROM
+										i_me_member_info
+									LEFT OUTER JOIN
+										i_me_favorite_club
+									ON
+										i_me_member_info.member_id = i_me_favorite_club.member_id
+									WHERE
+										i_me_member_info.member_id = #{memberId}
+									AND (
+											i_me_favorite_club.club_id = i_cp_delivery_condition.fav_club_id
+									)
+								)
+						) OR 
+						</if>
+						<!-- ↑↑ ニュースクラブ毎の場合、お気に入りクラブ限定（応募不可）のCPを探さない ↑↑ -->
+						(
+								i_cp_delivery_condition.rank_min  IS NOT NULL
+							AND
+								EXISTS(
+									SELECT
+										true
+									FROM
+										i_me_member_info
+									INNER JOIN
+										i_bc_member_medal_status
+									ON
+										i_me_member_info.member_id = i_bc_member_medal_status.member_id
+									WHERE
+										i_me_member_info.member_id =#{memberId}
+									AND (
+											 <![CDATA[ i_cp_delivery_condition.rank_min  > i_bc_member_medal_status.rank  ]]>
+									)
+								)
+						)
+						OR (
+								i_cp_delivery_condition.rank_max  IS NOT NULL
+							AND
+								EXISTS(
+									SELECT
+										true
+									FROM
+										i_me_member_info
+									INNER JOIN
+										i_bc_member_medal_status
+									ON
+										i_me_member_info.member_id = i_bc_member_medal_status.member_id
+									WHERE
+										i_me_member_info.member_id = #{memberId}
+									AND (
+											 <![CDATA[ i_cp_delivery_condition.rank_max  < i_bc_member_medal_status.rank  ]]>
+									)
+								)
+						)
+					)
+					OR (
+						(
+								i_cp_delivery_condition.delivery_type = 3
+							AND
+								EXISTS(
+									SELECT
+										true
+									FROM
+										i_cp_individual
+									WHERE
+										i_cp_individual.cp_notice_id = i_cp_notice.cp_notice_id
+									AND
+										i_cp_individual.member_id =#{memberId}
+								)
+							AND
+								i_cp_delivery_condition.check_in_flag = 1
+							AND
+								NOT EXISTS(
+									SELECT
+										true
+									FROM
+										i_me_member_info
+									LEFT OUTER JOIN
+										h_bc_checkin
+									ON
+										i_me_member_info.member_id = h_bc_checkin.member_id
+									LEFT OUTER JOIN
+										i_gm_schedule
+									ON
+										h_bc_checkin.game_id = i_gm_schedule.game_id
+									WHERE
+										i_me_member_info.member_id = #{memberId}
+									AND
+										i_gm_schedule.game_id = i_cp_delivery_condition.game_id
+							)
+						)
+						OR (
+								<![CDATA[ i_cp_delivery_condition.delivery_type <> 3 ]]>
+							AND
+								i_cp_delivery_condition.check_in_flag = 1
+							AND NOT EXISTS(
+								SELECT
+									true
+								FROM
+									i_me_member_info
+								LEFT OUTER JOIN
+									h_bc_checkin
+								ON
+									i_me_member_info.member_id = h_bc_checkin.member_id
+								LEFT OUTER JOIN
+									i_gm_schedule
+								ON
+									h_bc_checkin.game_id = i_gm_schedule.game_id
+								WHERE
+									i_me_member_info.member_id = #{memberId}
+								AND
+									i_gm_schedule.game_id = i_cp_delivery_condition.game_id
+							)
+						)
+					)
+				)
+				ORDER BY
+					i_cp_notice.disp_start_datetime DESC,
+					i_cp_notice.cp_notice_id DESC
+				<if test="limit != null">
+					LIMIT #{limit}
+				</if>
+			)
+	</sql>
+
+	<sql id="newsCampaignNonMemberWhere">
+		WHERE
+			i_cp_notice.cp_notice_kind = #{cpNoticeKind}
+		AND
+			i_cp_notice.cp_notice_status = #{cpNoticeStatus}
+		<if test="addLoadFlg == true">
+		AND
+			<![CDATA[ i_cp_notice.disp_start_datetime <= #{lastCampaignDispDate} ]]>
+		</if>
+		AND
+			#{currentDate} BETWEEN i_cp_notice.disp_start_datetime AND i_cp_notice.disp_end_datetime
+		ORDER BY
+			i_cp_notice.disp_start_datetime DESC,
+			i_cp_notice.cp_notice_id DESC
+		<if test="limit != null">
+			LIMIT #{limit}
+		</if>
+	</sql>
+
+	<select id="selectListICpNoticeForNewsCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT
+			count(newsCP.cp_notice_id)
+		FROM (
+			<include refid="newsCampaignWhere" />
+		) newsCP
+		<if test="limit != null">
+			LIMIT #{limit}
+		</if>
+		;
+	</select>
+
+	<select id="selectListICpNoticeForNews" resultMap="ICpNoticeDTO" parameterType="java.util.Map">
+		SELECT
+			newsCP.cp_notice_id,
+			newsCP.cp_notice_kind,
+			newsCP.distribution_src_id,
+			newsCP.disp_start_datetime,
+			newsCP.disp_end_datetime,
+			newsCP.cp_notice_status,
+			newsCP.cp_winner_num,
+			newsCP.push_delivery_flg,
+			newsCP.cp_notice_title,
+			newsCP.cp_banner_img_path,
+			newsCP.transition_dest_kind,
+			newsCP.transition_dest_url,
+			newsCP.available,
+			newsCP.regist_datetime,
+			newsCP.update_datetime
+		FROM (
+			<include refid="newsCampaignWhere" />
+		) newsCP
+		<if test="limit != null">
+			LIMIT #{limit}
+		</if>
+		;
+	</select>
+
+	<select id="selectListICpNoticeCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT
+			count(i_cp_notice.cp_notice_id)
+		FROM
+			i_cp_notice
+		<include refid="newsCampaignNonMemberWhere" />
+	</select>
+
+	<select id="selectListICpNotice" resultMap="ICpNoticeDTO" parameterType="java.util.Map">
+		SELECT
+			i_cp_notice.cp_notice_id,
+			i_cp_notice.cp_notice_kind,
+			i_cp_notice.distribution_src_id,
+			i_cp_notice.disp_start_datetime,
+			i_cp_notice.disp_end_datetime,
+			i_cp_notice.cp_notice_status,
+			i_cp_notice.cp_winner_num,
+			i_cp_notice.push_delivery_flg,
+			i_cp_notice.cp_notice_title,
+			i_cp_notice.cp_banner_img_path,
+			i_cp_notice.transition_dest_kind,
+			'' AS transition_dest_url,
+			true AS available,
+			i_cp_notice.regist_datetime,
+			i_cp_notice.update_datetime
+		FROM
+			i_cp_notice
+		<include refid="newsCampaignNonMemberWhere" />
+	</select>
+
+	<select id="selectOneInformation" resultMap="ICpNoticeDTO">
+	SELECT
+		A.cp_notice_id,
+		A.cp_notice_kind,
+		A.distribution_src_id,
+		A.disp_start_datetime,
+		A.disp_end_datetime,
+		A.cp_notice_status,
+		A.cp_winner_num,
+		A.push_delivery_flg,
+		A.cp_notice_title,
+		A.cp_banner_img_path,
+		A.transition_dest_kind,
+		A.transition_dest_url,
+		A.regist_datetime,
+		A.update_datetime
+	FROM
+		i_cp_notice as A
+	INNER JOIN
+		i_cp_delivery_condition as B
+	ON
+		A.cp_notice_id = B.cp_notice_id
+	WHERE
+			A.cp_notice_kind = #{cpNoticeKind}
+		AND	#{dispStartDatetime} BETWEEN A.disp_start_datetime AND  A.disp_end_datetime
+		AND A.cp_notice_status = #{cpNoticeStatus}
+		AND B.delivery_type = 1
+	order by
+		A.disp_start_datetime DESC,
+		A.cp_notice_id DESC
+	limit 1
+	</select>
+
+		<select id="selectAllInformation" resultMap="ICpNoticeDTO">
+	SELECT
+		A.cp_notice_id,
+		A.cp_notice_kind,
+		A.distribution_src_id,
+		A.disp_start_datetime,
+		A.disp_end_datetime,
+		A.cp_notice_status,
+		A.cp_winner_num,
+		A.push_delivery_flg,
+		A.cp_notice_title,
+		A.cp_banner_img_path,
+		A.transition_dest_kind,
+		A.transition_dest_url,
+		A.regist_datetime,
+		A.update_datetime
+	FROM
+		i_cp_notice as A
+	INNER JOIN
+		i_cp_delivery_condition as B
+	ON
+		A.cp_notice_id = B.cp_notice_id
+	WHERE
+			A.cp_notice_kind = #{cpNoticeKind}
+		AND	#{dispStartDatetime} BETWEEN A.disp_start_datetime AND  A.disp_end_datetime
+		AND A.cp_notice_status = #{cpNoticeStatus}
+		AND B.delivery_type = 1
+	order by
+		A.disp_start_datetime DESC,
+		A.cp_notice_id DESC
+	</select>
+	
+	<select id="selectByCpNoticeId" resultMap="defaultICpNoticeDTO" parameterType="java.lang.Integer">
+		SELECT
+			i_cp_notice.cp_notice_id,
+			i_cp_notice.cp_notice_kind,
+			i_cp_notice.distribution_src_id,
+			i_cp_notice.disp_start_datetime,
+			i_cp_notice.disp_end_datetime,
+			i_cp_notice.cp_notice_status,
+			i_cp_notice.cp_winner_num,
+			i_cp_notice.push_delivery_flg,
+			i_cp_notice.cp_notice_title,
+			i_cp_notice.cp_banner_img_path,
+			i_cp_notice.transition_dest_kind,
+			i_cp_notice.transition_dest_url,
+			i_cp_notice.regist_datetime,
+			i_cp_notice.update_datetime
+		FROM
+			i_cp_notice
+		WHERE
+			i_cp_notice.cp_notice_id = #{cpNoticeId}
+	</select>
+</mapper>

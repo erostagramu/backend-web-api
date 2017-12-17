@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.IMeDeviceTokenReadDAO">
+
+<resultMap id="IMeDeviceTokenDTO" type="jp.jleague.club.api.dao.masterdb.dto.IMeDeviceTokenDTO">
+<result javaType="java.lang.String" property="memberId" column="member_id"/>
+<result javaType="java.lang.String" property="deviceToken" column="device_token"/>
+<result javaType="java.lang.String" property="osName" column="os_name"/>
+<result javaType="java.lang.Byte" property="sendStatus" column="send_status"/>
+<result javaType="java.lang.Integer" property="sendFailTimes" column="send_fail_times"/>
+<result javaType="java.util.Date" property="registDatetime" column="regist_datetime"/>
+<result javaType="java.util.Date" property="updateDatetime" column="update_datetime"/>
+</resultMap>
+
+<select id="selectList" parameterType="jp.jleague.club.api.dao.masterdb.dto.IMeDeviceTokenDTO" resultMap="IMeDeviceTokenDTO">
+select 
+	member_id,
+    device_token,
+    os_name,
+    send_status,
+    send_fail_times,
+    regist_datetime,
+    update_datetime 
+from i_me_device_token 
+<if test="memberId != null">
+ where member_id = #{memberId} 
+</if>
+<if test="memberId == null and deviceToken != null">
+ where device_token = #{deviceToken}
+</if>
+<if test="memberId != null and deviceToken != null">
+ and device_token = #{deviceToken}
+</if>
+</select>
+</mapper> 

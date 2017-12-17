@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.write.IMeDeviceTokenWriteDAO">
+
+<resultMap id="IMeDeviceTokenDTO" type="jp.jleague.club.api.dao.masterdb.dto.IMeDeviceTokenDTO">
+<result javaType="java.lang.String" property="memberId" column="member_id"/>
+<result javaType="java.lang.String" property="deviceToken" column="device_token"/>
+<result javaType="java.lang.String" property="osName" column="os_name"/>
+<result javaType="java.lang.Byte" property="sendStatus" column="send_status"/>
+<result javaType="java.lang.Integer" property="sendFailTimes" column="send_fail_times"/>
+<result javaType="java.util.Date" property="registDatetime" column="regist_datetime"/>
+<result javaType="java.util.Date" property="updateDatetime" column="update_datetime"/>
+</resultMap>
+
+<insert id="insert" parameterType="jp.jleague.club.api.dao.masterdb.dto.IMeDeviceTokenDTO" >
+insert into i_me_device_token
+(
+	member_id,
+    device_token,
+    os_name,
+    send_status,
+    send_fail_times,
+    regist_datetime,
+    update_datetime
+)
+values
+(
+	#{memberId},
+	#{deviceToken},
+	#{osName},
+	#{sendStatus},
+	#{sendFailTimes},
+	#{registDatetime},
+	#{updateDatetime}
+)
+</insert>
+
+<update id="update" parameterType="jp.jleague.club.api.dao.masterdb.dto.IMeDeviceTokenDTO" >
+update i_me_device_token
+set
+	member_id = #{memberId},
+	device_token = #{deviceToken},
+	os_name = #{osName},
+	send_status = #{sendStatus},
+	send_fail_times = #{sendFailTimes},
+	regist_datetime = #{registDatetime},
+	update_datetime = #{updateDatetime}
+where member_id = #{memberId} and device_token = #{deviceToken}
+</update>
+
+<delete id="delete" parameterType="jp.jleague.club.api.dao.masterdb.dto.IMeDeviceTokenDTO">
+delete from i_me_device_token where member_id = #{memberId}
+<if test="deviceToken != null">
+ and device_token = #{deviceToken}
+</if>
+</delete>
+
+<select id="selectList" parameterType="java.lang.String" resultMap="IMeDeviceTokenDTO">
+select
+	member_id,
+	device_token,
+	os_name,
+	send_status,
+	send_fail_times,
+	regist_datetime,
+	update_datetime
+from i_me_device_token
+where member_id = #{memberId}
+</select>
+</mapper>

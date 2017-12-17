@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.HBcCheckinReadDAO">
+
+	<resultMap type="jp.jleague.club.api.dao.masterdb.dto.HBcCheckinDTO" id="HBcCheckinDTO">
+		<result column="checkin_history_serial_number" property="checkinHistorySerialNumber" javaType="java.lang.Integer" />
+		<result column="medal_kind_id" property="medalKindId" javaType="java.lang.Integer" />
+		<result column="member_id" property="memberId" javaType="java.lang.String" />
+		<result column="acquisition_medal_num" property="acquisitionMedalNum" javaType="java.lang.Integer" />
+		<result column="game_id" property="gameId" javaType="java.lang.String" />
+		<result column="support_club_id" property="supportClubId" javaType="java.lang.String" />
+		<result column="win_or_lose_flg" property="winOrLoseFlg" javaType="java.lang.Integer" />
+		<result column="venue_code" property="venueCode" javaType="java.lang.String" />
+		<result column="aeon_store_id" property="aeonStoreId" javaType="java.lang.String" />
+		<result column="longitude" property="longitude" javaType="java.lang.String" />
+		<result column="latitude" property="latitude" javaType="java.lang.String" />
+		<result column="checkin_completion_flg" property="checkinCompletionFlg" javaType="java.lang.Integer" />
+		<result column="regist_datetime" property="registDatetime" javaType="java.util.Date" />
+	</resultMap>
+
+	<resultMap type="jp.jleague.club.api.dao.masterdb.dto.MedalGotCheckinDTO" id="MedalGotCheckinDTO">
+		<result column="medal_kind_id" property="medalKindId" javaType="java.lang.Integer" />
+		<result column="member_id" property="memberId" javaType="java.lang.String" />
+		<result column="game_id" property="gameId" javaType="java.lang.String" />
+		<result column="game_kind_id" property="gameKindId" javaType="java.lang.Integer" />
+		<result column="support_club_id" property="supportClubId" javaType="java.lang.String" />
+		<result column="win_or_lose_flg" property="winOrLoseFlg" javaType="java.lang.Integer" />
+		<result column="home_club_id" property="homeClubId" javaType="java.lang.String" />
+		<result column="away_club_id" property="awayClubId" javaType="java.lang.String" />
+		<result column="venue_code" property="venueCode" javaType="java.lang.String" />
+		<result column="season_id" property="seasonId" javaType="java.lang.Integer" />
+		<result column="section" property="section" javaType="java.lang.Integer" />
+		<result column="game_start_datetime" property="gameStartDatetime" javaType="java.util.Date" />
+		<result column="regist_datetime" property="registDatetime" javaType="java.util.Date" />
+	</resultMap>
+
+	<select id="selectOneByVenueCodeMemberId" resultMap="HBcCheckinDTO" parameterType="jp.jleague.club.api.dao.masterdb.dto.HBcCheckinDTO">
+		select checkin_history_serial_number ,
+			   medal_kind_id ,
+			   member_id ,
+			   acquisition_medal_num ,
+			   game_id ,
+			   support_club_id ,
+			   win_or_lose_flg ,
+			   venue_code ,
+			   aeon_store_id ,
+			   longitude ,
+			   latitude ,
+			   checkin_completion_flg ,
+			   regist_datetime
+		  from h_bc_checkin
+		 where venue_code = #{venueCode}
+		   and member_id = #{memberId}
+	  order by checkin_history_serial_number desc
+		 limit 1
+	</select>
+
+	<select id="selectStCheckinByMemberIdGameId" resultMap="HBcCheckinDTO" parameterType="jp.jleague.club.api.dao.masterdb.dto.HBcCheckinDTO">
+		select cihis.checkin_history_serial_number ,
+			   cihis.medal_kind_id ,
+			   cihis.member_id ,
+			   cihis.acquisition_medal_num ,
+			   cihis.game_id ,
+			   cihis.support_club_id ,
+			   cihis.win_or_lose_flg ,
+			   cihis.venue_code ,
+			   cihis.aeon_store_id ,
+			   cihis.longitude ,
+			   cihis.latitude ,
+			   cihis.checkin_completion_flg ,
+			   cihis.regist_datetime
+		  from h_bc_checkin	as cihis
+	inner join i_gm_schedule as sch
+			on cihis.game_id = sch.game_id
+		 where cihis.medal_kind_id = #{medalKindId}
+		   and cihis.member_id = #{memberId}
+		   and cihis.game_id = #{gameId}
+	</select>
+	
+	<select id="countStCheckinByMemberIdGameId" resultType="java.lang.Integer" parameterType="jp.jleague.club.api.dao.masterdb.dto.HBcCheckinDTO">
+		select count(*)
+		from h_bc_checkin as cihis
+		inner join i_gm_schedule as sch on sch.game_id = cihis.game_id
+		 where cihis.medal_kind_id = #{medalKindId}
+		   and cihis.member_id = #{memberId}
+		   and cihis.game_id = #{gameId}
+	</select>
+
+	<select id="selectStudiumCIOrderByRegistDateLimit1" parameterType="jp.jleague.club.api.dao.masterdb.dto.HBcCheckinDTO" resultType="int">
+		select checkin_history_serial_number
+		from h_bc_checkin
+		where member_id = #{memberId}
+		  and medal_kind_id = #{medalKindId}
+		order by regist_datetime desc
+		limit 1
+	</select>
+
+	<select id="countCheckinNumByRegistDateToday" parameterType="jp.jleague.club.api.dao.masterdb.dto.HBcCheckinDTO" resultType="int">
+		select count(*)
+		from h_bc_checkin
+		where member_id = #{memberId}
+		  and medal_kind_id = #{medalKindId}
+		  and DATE_FORMAT(regist_datetime, '%Y%m%d') = DATE_FORMAT(#{registDatetime}, '%Y%m%d')
+		limit 1
+	</select>
+
+	<select id="selectMedalGotSorryCIOrderByGameDate" parameterType="java.lang.String" resultMap="MedalGotCheckinDTO">
+		select
+			chk.medal_kind_id,
+			chk.member_id,
+			chk.game_id,
+			null as game_kind_id,
+			chk.support_club_id,
+			chk.win_or_lose_flg,
+			null as home_club_id,
+			null as away_club_id,
+			null as venue_code,
+			null as season_id,
+			null as section,
+			null as game_start_datetime,
+			chk.regist_datetime
+		from h_bc_checkin chk,
+			 h_bc_medal_acquisition hist
+		where chk.member_id = #{memberId}
+		  and chk.checkin_history_serial_number = hist.checkin_history_serial_number
+		  and chk.medal_kind_id = 1200
+		group by chk.regist_datetime
+	</select>
+
+	<select id="selectMedalGotStOtpCIOrderByGameDate" parameterType="java.lang.String" resultMap="MedalGotCheckinDTO">
+		select
+			chk.medal_kind_id,
+			chk.member_id,
+			chk.game_id,
+			sch.game_kind_id,
+			chk.support_club_id,
+			chk.win_or_lose_flg,
+			sch.home_club_id,
+			sch.away_club_id,
+			sch.venue_code,
+			sch.season_id,
+			sch.section,
+			sch.game_start_datetime,
+			chk.regist_datetime
+		from h_bc_checkin chk,
+			 h_bc_medal_acquisition hist,
+			 i_gm_schedule sch
+		where chk.member_id = #{memberId}
+		  and chk.game_id = sch.game_id
+		  and chk.checkin_history_serial_number = hist.checkin_history_serial_number
+		  and chk.medal_kind_id in (0, 1400)
+		group by chk.game_id
+		order by sch.game_start_datetime
+	</select>
+
+	<select id="selectAeonCheckinByMemberIdMedalKindId" resultMap="HBcCheckinDTO" parameterType="jp.jleague.club.api.dao.masterdb.dto.HBcCheckinDTO">
+		select checkin_history_serial_number ,
+               medal_kind_id ,
+               member_id ,
+               acquisition_medal_num ,
+               game_id ,
+               support_club_id ,
+               win_or_lose_flg ,
+               venue_code ,
+               aeon_store_id ,
+               longitude ,
+               latitude ,
+               checkin_completion_flg ,
+               regist_datetime
+		  from h_bc_checkin
+		 where medal_kind_id = #{medalKindId}
+           and member_id = #{memberId}
+           and regist_datetime >= #{startDatetime}
+	       and regist_datetime <![CDATA[<]]> #{endDatetime}
+	</select>
+
+
+	<select id="selectCICountByMedalIdCIFlg" parameterType="jp.jleague.club.api.dao.masterdb.dto.HBcCheckinDTO" resultType="int">
+		select count(*)
+		from h_bc_checkin
+		where member_id = #{memberId}
+		  and medal_kind_id = #{medalKindId}
+		  and checkin_completion_flg = #{checkinCompletionFlg}
+	</select>
+	
+	<select id="selectMemberIdCountCheck" parameterType="java.util.Map" resultType="int">
+	select
+		count(*)
+	from
+		h_bc_checkin
+	where
+			member_id = #{memberId}
+		and medal_kind_id in 
+			<foreach item="item" collection="medalKindId" open="(" separator="," close=")"> #{item} </foreach>
+	</select>
+
+	<select id="isNot2hoursPassedByMemberId" parameterType="jp.jleague.club.api.dao.masterdb.dto.HBcCheckinDTO" resultType="boolean">
+		select count(*) > 0
+		from h_bc_checkin
+		where member_id = #{memberId}
+		  and medal_kind_id = #{medalKindId}
+		  and checkin_completion_flg = #{checkinCompletionFlg}
+		  and regist_datetime > #{registDatetime}
+	</select>
+
+</mapper>

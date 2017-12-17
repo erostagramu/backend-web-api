@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.write.HBcAdCodeUseWriteDAO">
+	<resultMap type="jp.jleague.club.api.dao.masterdb.dto.HBcAdCodeUseDTO" id="HBcAdCodeUseDTO">
+		<result column="ad_code_use_serial_number" property="adCodeUseSerialNumber" javaType="java.lang.Integer" />
+		<result column="ad_code_use_member_id" property="adCodeUseMemberId" javaType="java.lang.String" />
+		<result column="ad_code" property="adCode" javaType="java.lang.String" />
+		<result column="regist_datetime" property="registDatetime" javaType="java.util.Date" />
+	</resultMap>
+	
+	<insert id="insertUsedAdCode" parameterType="jp.jleague.club.api.dao.masterdb.dto.HBcAdCodeUseDTO">
+		INSERT INTO 
+			h_bc_ad_code_use(
+				ad_code_use_member_id,
+				ad_code,
+				regist_datetime
+			)
+		VALUES(
+			#{adCodeUseMemberId},
+			#{adCode},
+			#{registDatetime}
+		)
+	</insert>
+</mapper>

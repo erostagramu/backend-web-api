@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.IMeDeviceUuidReadDAO">
+
+	<resultMap id="DTO" type="jp.jleague.club.api.dao.masterdb.dto.IMeDeviceUuidDTO">
+		<result column="device_uuid" property="deviceUuid" javaType="java.lang.String" />
+		<result column="member_id" property="memberId" javaType="java.lang.String" />
+		<result column="regist_datetime" property="registDatetime" javaType="java.util.Date" />
+		<result column="update_datetime" property="updateDatetime" javaType="java.util.Date" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		  device_uuid
+		, member_id
+		, regist_datetime
+		, update_datetime
+	</sql>
+	
+	<select id="selectListByUuid" resultMap="DTO">
+	select 
+		<include refid="Base_Column_List" />
+	from i_me_device_uuid 
+	where device_uuid = #{deviceUuid}
+	</select>
+</mapper> 

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.write.ICpApplicantInfoWriteDAO">
+
+	<select id="hasAppliedCheckCount" parameterType="jp.jleague.club.api.dao.masterdb.dto.ICpApplicantInfoDTO" resultType="boolean">
+		select 
+			count(*) > 0
+		from 
+			i_cp_applicant_info
+		where cp_notice_id = #{cpNoticeId}
+		  and applicant_member_id = #{applicantMemberId}
+	</select>
+
+	<insert id="insertICpApplicantInfo" parameterType="jp.jleague.club.api.dao.masterdb.dto.ICpApplicantInfoDTO">
+		INSERT INTO
+			i_cp_applicant_info
+		(
+			cp_notice_id,
+			applicant_member_id,
+			applicant_mail_address,
+			applicant_winning_flg,
+			applicant_application_datetime,
+			applicant_postal_code,
+			applicant_prefecture,
+			applicant_city,
+			applicant_address,
+			applicant_building,
+			applicant_contact_information,
+			applicant_name,
+			applicant_name_kana,
+			applicant_sex,
+			applicant_birthday,
+			applicant_answer_1,
+			applicant_answer_2,
+			applicant_answer_3,
+			applicant_answer_4,
+			applicant_answer_5,
+			applicant_answer_6,
+			applicant_answer_7,
+			applicant_answer_8,
+			applicant_answer_9,
+			applicant_answer_10,
+			delete_flg,
+			regist_datetime,
+			update_datetime
+		) VALUES (
+			#{cpNoticeId},
+			#{applicantMemberId},
+			#{applicantMailAddress},
+			#{applicantWinningFlg},
+			#{applicantApplicationDatetime},
+			#{applicantPostalCode},
+			#{applicantPrefecture},
+			#{applicantCity},
+			#{applicantAddress},
+			#{applicantBuilding},
+			#{applicantContactInformation},
+			#{applicantName},
+			#{applicantNameKana},
+			#{applicantSex},
+			#{applicantBirthday},
+			#{applicantAnswer1},
+			#{applicantAnswer2},
+			#{applicantAnswer3},
+			#{applicantAnswer4},
+			#{applicantAnswer5},
+			#{applicantAnswer6},
+			#{applicantAnswer7},
+			#{applicantAnswer8},
+			#{applicantAnswer9},
+			#{applicantAnswer10},
+			#{deleteFlg},
+			#{registDatetime},
+			#{updateDatetime}
+		) ;
+	</insert>
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.jleague.club.api.dao.masterdb.read.MMedalKindReadDAO">
+
+	<resultMap type="jp.jleague.club.api.dao.masterdb.dto.MMedalKindDTO" id="MMedalKindDTO">
+		<result column="medal_kind_id" property="medalKindId" javaType="java.lang.Integer" />
+		<result column="medal_type" property="medalType" javaType="java.lang.String" />
+		<result column="medal_name" property="medalName" javaType="java.lang.String" />
+		<result column="medal_group" property="medalGroup" javaType="java.lang.Integer" />
+		<result column="level" property="level" javaType="java.lang.Integer" />
+		<result column="medal_num" property="medalNum" javaType="java.lang.Integer" />
+		<result column="set_point" property="setPoint" javaType="java.lang.Integer" />
+		<result column="acquisition_condition" property="acquisitionCondition" javaType="java.lang.String" />
+		<result column="medal_img_path" property="medalImgPath" javaType="java.lang.String" />
+		<result column="regist_datetime" property="registDatetime" javaType="java.util.Date" />
+	</resultMap>
+
+	<select id="selectOneByMedalKindId" resultMap="MMedalKindDTO" parameterType="jp.jleague.club.api.dao.masterdb.dto.MMedalKindDTO">
+		select medal_kind_id ,
+		       medal_type ,
+		       medal_name ,
+		       medal_group ,
+		       level ,
+		       medal_num ,
+		       set_point ,
+		       acquisition_condition ,
+		       medal_img_path ,
+		       regist_datetime
+		  from m_medal_kind
+		 where medal_kind_id = #{medalKindId}
+	</select>
+
+	<select id="selectMedalKind" parameterType="int" resultMap="MMedalKindDTO">
+		select
+			medal_kind_id,
+			medal_type,
+			medal_name,
+			medal_group,
+			level,
+			medal_num,
+			set_point,
+			acquisition_condition,
+			medal_img_path
+		from m_medal_kind
+		where medal_kind_id = #{medalKindId}
+	</select>
+
+	<select id="selectMedalKindMaxLevel" parameterType="int" resultType="java.lang.Integer">
+		select
+			max(level)
+		from m_medal_kind
+		where medal_group = #{medalGroup}
+	</select>
+
+	<select id="selectMaxMedalKind" resultMap="MMedalKindDTO" parameterType="jp.jleague.club.api.dao.masterdb.dto.MMedalKindDTO">
+		select
+			medal_kind_id,
+			medal_type,
+			medal_name,
+			medal_group,
+			level,
+			medal_num,
+			set_point,
+			acquisition_condition,
+			medal_img_path
+		from m_medal_kind
+		where medal_group = #{medalGroup}
+		order by level desc
+		limit 1
+	</select>
+
+	<select id="selectMedalKindByGroupLevel" resultMap="MMedalKindDTO" parameterType="jp.jleague.club.api.dao.masterdb.dto.MMedalKindDTO">
+		select
+			medal_kind_id,
+			medal_type,
+			medal_name,
+			medal_group,
+			level,
+			medal_num,
+			set_point,
+			acquisition_condition,
+			medal_img_path
+		from m_medal_kind
+		where medal_group = #{medalGroup}
+		  and level = #{level}
+	</select>
+
+</mapper>
