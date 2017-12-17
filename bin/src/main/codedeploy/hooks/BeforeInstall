@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+if [[ -d /tmp/codedeploy-deployment-staging-area ]]; then
+  rm -rf /tmp/codedeploy-deployment-staging-area
+fi
+
+mkdir /tmp/codedeploy-deployment-staging-area

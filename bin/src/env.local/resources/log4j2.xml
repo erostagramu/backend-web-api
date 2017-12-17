@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="FATAL" packages="com.teamlab.selectware.ext.log4j2">
+	<appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSSZ} [%-5level] [%t] %logger{36} - %msg%n</pattern>
+			</PatternLayout>
+		</Console>
+	</appenders>
+
+	<loggers>
+		<root level="info">
+			<appender-ref ref="Console" />
+		</root>
+		<Logger name="org.springframework" level="info" />
+		<Logger name="org.apache" level="info" />
+		<Logger name="ch.qos" level="warn" />
+		<Logger name="jp.jleague" level="debug" />
+	</loggers>
+
+</configuration>

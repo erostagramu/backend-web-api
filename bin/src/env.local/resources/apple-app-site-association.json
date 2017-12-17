@@ -1,0 +1,13 @@
+{
+	"applinks": {
+		"apps": [],
+		"details": [
+			{
+				"appID": "PA5TK932VE.com.teamlab.club-jleague",
+				"paths": [
+					"/oauthCallback/*"
+				]
+			}
+		]
+	}
+}
