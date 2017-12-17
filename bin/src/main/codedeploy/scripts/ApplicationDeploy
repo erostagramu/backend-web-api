@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -e
+
+# Tomcat stop
+ret="$(service tomcat8 status > /dev/null ; echo $?)"
+if [ "${ret}" == "0" ] ; then
+  echo "stop tomcat."
+  service tomcat8 stop
+else
+  echo "tomcat is not running."
+fi
+
+# Remove unpacked application artifacts
+if [[ -f /usr/share/tomcat8/webapps/${project.build.finalName}.war ]]; then
+    rm -f /usr/share/tomcat8/webapps/${project.build.finalName}.war
+fi
+if [[ -d /usr/share/tomcat8/webapps/${project.build.finalName} ]]; then
+    rm -rfv /usr/share/tomcat8/webapps/${project.build.finalName}
+fi
+if [[ -f /usr/share/tomcat8/webapps/ROOT.war ]]; then
+    rm -f /usr/share/tomcat8/webapps/ROOT.war
+fi
+if [[ -d /usr/share/tomcat8/webapps/ROOT ]]; then
+    rm -rfv /usr/share/tomcat8/webapps/ROOT
+fi
+if [[ ! -e /var/log/jleague ]]; then
+    mkdir -p /var/log/jleague
+    chown tomcat.tomcat /var/log/jleague
+fi
+
+# Extract war file
+mkdir /usr/share/tomcat8/webapps/ROOT
+unzip /tmp/codedeploy-deployment-staging-area/ROOT.war -d /usr/share/tomcat8/webapps/ROOT
+rm -f /tmp/codedeploy-deployment-staging-area/ROOT.war
+
+# tomcat start
+service tomcat8 start
