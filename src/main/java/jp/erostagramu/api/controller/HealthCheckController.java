@@ -5,32 +5,32 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "api/v1/health_check")
+@RequestMapping(value = "api/v1/healthCheck")
 public class HealthCheckController {
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public HealthCheckInfoDto get() {
+	public HealthCheckInfoDto validateGetMethod() {
 		HealthCheckInfoDto dto = new HealthCheckInfoDto();
 		dto.setStatus("success");
 		return dto;
 	}
 
 	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public HealthCheckInfoDto post() {
+	public HealthCheckInfoDto validatePostMethod() {
 		HealthCheckInfoDto dto = new HealthCheckInfoDto();
 		dto.setStatus("success");
 		return dto;
 	}
 
 	@RequestMapping(value = "/", method = RequestMethod.PUT)
-	public HealthCheckInfoDto put() {
+	public HealthCheckInfoDto validatePutMethod() {
 		HealthCheckInfoDto dto = new HealthCheckInfoDto();
 		dto.setStatus("success");
 		return dto;
 	}
 
 	@RequestMapping(value = "/", method = RequestMethod.DELETE)
-	public HealthCheckInfoDto delete() {
+	public HealthCheckInfoDto validateDeleteMethod() {
 		HealthCheckInfoDto dto = new HealthCheckInfoDto();
 		dto.setStatus("success");
 		return dto;
