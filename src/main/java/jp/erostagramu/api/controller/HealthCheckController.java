@@ -10,29 +10,21 @@ public class HealthCheckController {
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public HealthCheckInfoDto validateGetMethod() {
-		HealthCheckInfoDto dto = new HealthCheckInfoDto();
-		dto.setStatus("success");
-		return dto;
+		return HealthCheckInfoDto.builder().status("success").build();
 	}
 
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	public HealthCheckInfoDto validatePostMethod() {
-		HealthCheckInfoDto dto = new HealthCheckInfoDto();
-		dto.setStatus("success");
-		return dto;
+		return HealthCheckInfoDto.builder().status("success").build();
 	}
 
 	@RequestMapping(value = "/", method = RequestMethod.PUT)
 	public HealthCheckInfoDto validatePutMethod() {
-		HealthCheckInfoDto dto = new HealthCheckInfoDto();
-		dto.setStatus("success");
-		return dto;
+		return HealthCheckInfoDto.builder().status("success").build();
 	}
 
 	@RequestMapping(value = "/", method = RequestMethod.DELETE)
 	public HealthCheckInfoDto validateDeleteMethod() {
-		HealthCheckInfoDto dto = new HealthCheckInfoDto();
-		dto.setStatus("success");
-		return dto;
+		return HealthCheckInfoDto.builder().status("success").build();
 	}
 }
