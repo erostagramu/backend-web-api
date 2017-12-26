@@ -1,4 +1,4 @@
-package jp.erostagramu.api.controller;
+package jp.erostagramu.api.dto;
 
 import lombok.Data;
 import lombok.Builder;
