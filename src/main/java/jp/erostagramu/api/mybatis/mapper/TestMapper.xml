@@ -17,7 +17,7 @@
         <result column="sys_update_date" property="sysUpdateDate" />
         
     </resultMap>
-    <select id="selectTest" resultMap="TestResult" parameterType="int">
+    <select id="selectTest" resultMap="TestResult" parameterType="Integer">
         select title
         from i_movies
         where id = #{id}

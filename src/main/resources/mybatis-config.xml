@@ -11,7 +11,7 @@
 				<property name="url"
 					value="jdbc:mysql://localhost:3306/erostagramu?useSSL=false" />
 				<property name="username" value="erostagramu" />
-				<property name="password" value="passwprd" />
+				<property name="password" value="password" />
 			</dataSource>
 		</environment>
 	</environments>

@@ -2,13 +2,11 @@ package jp.erostagramu.api.dto;
 
 import java.sql.Date;
 
-import lombok.Builder;
 import lombok.Data;
 
-@Builder
 @Data
 public class MovieDto {
-
+	
 	private Integer id;
 
 	private Integer no;
