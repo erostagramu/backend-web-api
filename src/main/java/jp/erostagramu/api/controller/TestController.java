@@ -20,7 +20,7 @@ import jp.erostagramu.api.dto.MovieDto;
 @EnableAutoConfiguration
 public class TestController {
 	
-	@RequestMapping("/service")
+	@RequestMapping("/test")
 	@ResponseBody
 	public List<String> top() {
 		String resource = "mybatis-config.xml";
@@ -35,8 +35,6 @@ public class TestController {
 			e.printStackTrace();
 		}
 		List<String> list = new ArrayList<String>();
-		list.add("太宰");
-		list.add("夏目");
 		list.add(md.getTitle());
 		return list;
 	}
