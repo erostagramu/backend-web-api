@@ -16,6 +16,6 @@
 		</environment>
 	</environments>
 	<mappers>
-		<mapper resource="jp/erostagramu/api/mybatis/mapper/TestMapper.xml" />
+		<mapper resource="TestMapper.xml" />
 	</mappers>
 </configuration>
