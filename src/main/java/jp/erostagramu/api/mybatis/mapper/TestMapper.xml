@@ -17,7 +17,8 @@
 		<result column="sys_update_date" property="sysUpdateDate" />
 	</resultMap>
 
-	<insert id="insertAuthor" parameterType="jp.erostagramu.api.dto.MovieDto">
+	<insert id="create" parameterType="jp.erostagramu.api.dto.MovieDto"
+		useGeneratedKeys="true" keyProperty="no">
 		insert into i_movies
 		(id,thumbnail_url,title,category_id_01,category_id_02,category_id_03,category_id_04,category_id_05,resource_id)
 		values

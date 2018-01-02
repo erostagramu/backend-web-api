@@ -19,7 +19,7 @@ import jp.erostagramu.api.dto.MovieDto;
 @Controller
 @EnableAutoConfiguration
 public class TestController {
-	
+
 	@RequestMapping("/test")
 	@ResponseBody
 	public List<String> top() {

@@ -1,17 +1,16 @@
 package jp.erostagramu.api.controller;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jp.erostagramu.api.dto.MovieDto;
 
@@ -21,14 +20,28 @@ import jp.erostagramu.api.dto.MovieDto;
 public class CreateController {
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public void createMovie() throws JsonParseException, JsonMappingException, IOException {
+	public void createMovie() {
+		String resource = "mybatis-config.xml";
+		InputStream inputStream;
+		try {
+			inputStream = Resources.getResourceAsStream(resource);
+			SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+			SqlSession session = sqlSessionFactory.openSession();
 
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode root = mapper.readTree(new File("/Users/takuma/develop/test.json"));
-		String sample = root.get("title").asText();
-		
-		// MovieDto dto = mapper.readValue(json, MovieDto.class);
-
-		// System.out.println(dto);
+			MovieDto dto = new MovieDto();
+			dto.setId(999);
+			dto.setThumbnailUrl("http://test01.com");
+			dto.setTitle("動画あ");
+			dto.setCategoryId01(10);
+			dto.setCategoryId02(20);
+			dto.setCategoryId03(10);
+			dto.setCategoryId04(20);
+			dto.setCategoryId05(10);
+			dto.setResourceId(1);
+			session.insert("jp.erostagramu.api.mybatis.mapper.TestMapper.create", dto);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
