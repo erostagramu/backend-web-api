@@ -16,30 +16,32 @@ import jp.erostagramu.api.dto.MovieDto;
 
 @Transactional(timeout = 15)
 @RestController
-@RequestMapping(value = "api/v1/movie")
+@RequestMapping(value = "api/v1/test")
 public class TestController {
 	
-	private static final String RESOURCE = "mybatis-config.xml";
+	private InputStream inputStream;
+	SqlSessionFactory sqlSessionFactory;
+	private SqlSession session;
 	
-	@RequestMapping("/test/{id}")
+	public TestController() throws IOException {
+		inputStream = Resources.getResourceAsStream("mybatis-config.xml");
+		sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+		session = sqlSessionFactory.openSession();
+	}
+	
+	
+	@RequestMapping("/{id}")
 	public String searchById(@PathVariable Integer id) throws IOException {
-		InputStream inputStream = Resources.getResourceAsStream(RESOURCE);
-		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-		SqlSession session = sqlSessionFactory.openSession();
 		MovieDto dto = session.selectOne("jp.erostagramu.api.mapper.TestMapper.selectTest",id);
 		return dto.getTitle();
 	}
 	
 	@RequestMapping("/")
 	public Integer create() throws IOException {
-		InputStream inputStream = Resources.getResourceAsStream(RESOURCE);
-		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-		SqlSession session = sqlSessionFactory.openSession();
-		
 		MovieDto dto = new MovieDto();
-		dto.setId(3000);
+		dto.setId(9999);
 		dto.setThumbnailUrl("http://hoge");
-		dto.setTitle("動画C");
+		dto.setTitle("動画E");
 		dto.setCategoryId01(10);
 		dto.setCategoryId02(20);
 		dto.setCategoryId03(10);
