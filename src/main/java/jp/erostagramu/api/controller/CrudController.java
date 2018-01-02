@@ -12,7 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,13 +21,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+
 import jp.erostagramu.api.dto.MovieDto;
 import jp.erostagramu.api.dto.ResultDto;
 
 @Transactional(timeout = 15)
 @RestController
 @RequestMapping(value = "api/v1/movie")
-public class CrudController {
+public class CrudController extends ResponseEntityExceptionHandler{
 
 	private InputStream inputStream;
 	private SqlSessionFactory sqlSessionFactory;
@@ -58,16 +59,25 @@ public class CrudController {
 		return dto.getTitle();
 	}
 
-	// ID重複時のエラーレスポンス
-	@ControllerAdvice
-	public class CommonExceptionHandler extends ResponseEntityExceptionHandler {
-		@ExceptionHandler
-		public ResponseEntity<Object> 
-		handleRuntimeException(SQLIntegrityConstraintViolationException exception,WebRequest request) {
-			ResultDto errorBody = ResultDto.builder().message("動画のIDが既に存在しています").build();
-			return handleExceptionInternal
-			(exception, errorBody, new HttpHeaders(), HttpStatus.CONFLICT, request);
-            // 例外,レスポンスボディ,レスポンスヘッダー,レスポンスステータス,リクエスト
-		}
+	// 主キー重複または外部キー違反が発生した時のレスポンス
+	@ExceptionHandler
+	public ResponseEntity<Object> 
+	handleRuntimeException(SQLIntegrityConstraintViolationException ex,WebRequest req) {
+		String errorMessage = "[重複する動画ID]または[存在しないカテゴリID・連携元動画種別ID]が指定されました";
+		ResultDto errorBody = ResultDto.builder().message(errorMessage).build();
+		return handleExceptionInternal
+		(ex, errorBody, new HttpHeaders(), HttpStatus.CONFLICT, req);
+        // (例外,レスポンスボディ,レスポンスヘッダー,レスポンスステータス,リクエスト)
+	}
+		
+	// <!動きません！>JSONに誤ったデータ型が記載されていた時のレスポンス
+	@ExceptionHandler
+	public ResponseEntity<Object> 
+	handleRuntimeException(InvalidFormatException ex,WebRequest req) {
+		String errorMessage = "JSONのデータ型が間違っています";
+		ResultDto errorBody = ResultDto.builder().message(errorMessage).build();
+		return handleExceptionInternal
+		(ex,errorBody, new HttpHeaders(), HttpStatus.BAD_REQUEST, req);
+        // (例外,レスポンスボディ,レスポンスヘッダー,レスポンスステータス,リクエスト)
 	}
 }
