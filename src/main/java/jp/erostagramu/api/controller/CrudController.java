@@ -8,6 +8,7 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +26,12 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 import jp.erostagramu.api.dto.MovieDto;
 import jp.erostagramu.api.dto.ResultDto;
+import jp.erostagramu.api.facade.CreateFecadeImpl;
 
 @Transactional(timeout = 15)
 @RestController
 @RequestMapping(value = "api/v1/movie")
-public class CrudController extends ResponseEntityExceptionHandler{
+public class CrudController extends ResponseEntityExceptionHandler {
 
 	private InputStream inputStream;
 	private SqlSessionFactory sqlSessionFactory;
@@ -41,15 +43,13 @@ public class CrudController extends ResponseEntityExceptionHandler{
 		session = sqlSessionFactory.openSession();
 	}
 
+	@Autowired
+	private CreateFecadeImpl createFecadeImpl;
+
 	// 動画登録API
 	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public ResultDto create(@RequestBody MovieDto dto) throws IOException {
-		Integer insertCnt = session.insert("jp.erostagramu.api.mapper.ApiMapper.create", dto);
-		session.commit();
-		if (insertCnt != 1) {
-			return ResultDto.builder().message("動画の作成に失敗しました").build();
-		}
-		return null;
+	public ResultDto create(@RequestBody MovieDto movieDto) {
+		return createFecadeImpl.create(movieDto);
 	}
 
 	// 一時的な動作確認用です。IDからTitleを検索して表示します。
@@ -61,23 +61,19 @@ public class CrudController extends ResponseEntityExceptionHandler{
 
 	// 主キー重複または外部キー違反が発生した時のレスポンス
 	@ExceptionHandler
-	public ResponseEntity<Object> 
-	handleRuntimeException(SQLIntegrityConstraintViolationException ex,WebRequest req) {
+	public ResponseEntity<Object> handleRuntimeException(SQLIntegrityConstraintViolationException ex, WebRequest req) {
 		String errorMessage = "[重複する動画ID]または[存在しないカテゴリID・連携元動画種別ID]が指定されました";
 		ResultDto errorBody = ResultDto.builder().message(errorMessage).build();
-		return handleExceptionInternal
-		(ex, errorBody, new HttpHeaders(), HttpStatus.CONFLICT, req);
-        // (例外,レスポンスボディ,レスポンスヘッダー,レスポンスステータス,リクエスト)
+		return handleExceptionInternal(ex, errorBody, new HttpHeaders(), HttpStatus.CONFLICT, req);
+		// (例外,レスポンスボディ,レスポンスヘッダー,レスポンスステータス,リクエスト)
 	}
-		
+
 	// <!動きません！>JSONに誤ったデータ型が記載されていた時のレスポンス
 	@ExceptionHandler
-	public ResponseEntity<Object> 
-	handleRuntimeException(InvalidFormatException ex,WebRequest req) {
+	public ResponseEntity<Object> handleRuntimeException(InvalidFormatException ex, WebRequest req) {
 		String errorMessage = "JSONのデータ型が間違っています";
 		ResultDto errorBody = ResultDto.builder().message(errorMessage).build();
-		return handleExceptionInternal
-		(ex,errorBody, new HttpHeaders(), HttpStatus.BAD_REQUEST, req);
-        // (例外,レスポンスボディ,レスポンスヘッダー,レスポンスステータス,リクエスト)
+		return handleExceptionInternal(ex, errorBody, new HttpHeaders(), HttpStatus.BAD_REQUEST, req);
+		// (例外,レスポンスボディ,レスポンスヘッダー,レスポンスステータス,リクエスト)
 	}
 }
