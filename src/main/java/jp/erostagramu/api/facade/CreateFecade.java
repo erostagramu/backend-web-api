@@ -1,7 +1,7 @@
 package jp.erostagramu.api.facade;
 
-import jp.erostagramu.api.dto.MovieDto;
-import jp.erostagramu.api.dto.ResultDto;
+import jp.erostagramu.api.dao.masterdb.dto.MovieDto;
+import jp.erostagramu.api.dao.masterdb.dto.ResultDto;
 
 public interface CreateFecade {
 	

@@ -3,9 +3,9 @@ package jp.erostagramu.api.facade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import jp.erostagramu.api.dao.masterdb.dto.MovieDto;
+import jp.erostagramu.api.dao.masterdb.dto.ResultDto;
 import jp.erostagramu.api.dao.masterdb.write.impl.CreateDaoImpl;
-import jp.erostagramu.api.dto.MovieDto;
-import jp.erostagramu.api.dto.ResultDto;
 
 @Component
 public class CreateFecadeImpl implements CreateFecade{

@@ -10,9 +10,9 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import jp.erostagramu.api.dao.masterdb.dto.MovieDto;
+import jp.erostagramu.api.dao.masterdb.dto.ResultDto;
 import jp.erostagramu.api.dao.masterdb.write.CreateDao;
-import jp.erostagramu.api.dto.MovieDto;
-import jp.erostagramu.api.dto.ResultDto;
 
 @Component
 public class CreateDaoImpl implements CreateDao{

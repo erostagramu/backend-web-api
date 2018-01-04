@@ -24,8 +24,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
-import jp.erostagramu.api.dto.MovieDto;
-import jp.erostagramu.api.dto.ResultDto;
+import jp.erostagramu.api.dao.masterdb.dto.MovieDto;
+import jp.erostagramu.api.dao.masterdb.dto.ResultDto;
 import jp.erostagramu.api.facade.CreateFecadeImpl;
 
 @Transactional(timeout = 15)

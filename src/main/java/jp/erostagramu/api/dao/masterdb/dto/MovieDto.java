@@ -1,4 +1,4 @@
-package jp.erostagramu.api.dto;
+package jp.erostagramu.api.dao.masterdb.dto;
 
 import java.sql.Date;
 

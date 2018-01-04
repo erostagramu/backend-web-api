@@ -1,7 +1,7 @@
 package jp.erostagramu.api.dao.masterdb.write;
 
-import jp.erostagramu.api.dto.MovieDto;
-import jp.erostagramu.api.dto.ResultDto;
+import jp.erostagramu.api.dao.masterdb.dto.MovieDto;
+import jp.erostagramu.api.dao.masterdb.dto.ResultDto;
 
 public interface CreateDao {
 	

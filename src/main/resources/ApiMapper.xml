@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jp.erostagramu.api.mapper.ApiMapper">
-	<resultMap id="movieResult" type="jp.erostagramu.api.dto.MovieDto">
+	<resultMap id="movieResult" type="jp.erostagramu.api.dao.masterdb.dto.MovieDto">
 		<result column="id" property="id" />
 		<result column="no" property="no" />
 		<result column="thumbnail_url" property="thumbnailUrl" />
@@ -17,7 +17,7 @@
 		<result column="sys_update_date" property="sysUpdateDate" />
 	</resultMap>
 
-	<insert id="create" parameterType="jp.erostagramu.api.dto.MovieDto"
+	<insert id="create" parameterType="jp.erostagramu.api.dao.masterdb.dto.MovieDto"
 		useGeneratedKeys="true" keyProperty="no">
 		insert into i_movies
 		(id,thumbnail_url,title,category_id_01,category_id_02,category_id_03,category_id_04,category_id_05,resource_id)
