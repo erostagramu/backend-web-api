@@ -9,6 +9,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 import jp.erostagramu.api.dao.masterdb.dto.MovieDto;
 import jp.erostagramu.api.dao.masterdb.dto.ResultDto;
-import jp.erostagramu.api.facade.CreateFecadeImpl;
+import jp.erostagramu.api.facade.CreateFecade;
 
 @Transactional(timeout = 15)
 @RestController
@@ -42,14 +43,15 @@ public class CrudController extends ResponseEntityExceptionHandler {
 		sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
 		session = sqlSessionFactory.openSession();
 	}
-
+	
 	@Autowired
-	private CreateFecadeImpl createFecadeImpl;
+	@Qualifier("createFacade")
+	private CreateFecade createFecade;
 
 	// 動画登録API
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	public ResultDto create(@RequestBody MovieDto movieDto) {
-		return createFecadeImpl.create(movieDto);
+		return createFecade.create(movieDto);
 	}
 
 	// 一時的な動作確認用です。IDからTitleを検索して表示します。
