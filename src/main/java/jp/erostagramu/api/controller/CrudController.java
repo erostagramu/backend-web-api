@@ -47,11 +47,11 @@ public class CrudController extends ResponseEntityExceptionHandler {
 		// (例外,レスポンスボディ,レスポンスヘッダー,レスポンスステータス,リクエスト)
 	}
 
-	// <!動きません！>JSONに誤ったデータ型が記載されていた時のレスポンス
-	@ExceptionHandler
-	public ResponseEntity<Object> handleRuntimeException(InvalidFormatException ex, WebRequest req) {
-		ExceptionDto exDto = exceptionFacade.writeErrorCode(ex, req);
-		return handleExceptionInternal(ex, exDto.getBody(), new HttpHeaders(), exDto.getStatus(), req);
-		// (例外,レスポンスボディ,レスポンスヘッダー,レスポンスステータス,リクエスト)
-	}
+//	// <!動きません！>JSONに誤ったデータ型が記載されていた時のレスポンス
+//	@ExceptionHandler
+//	public ResponseEntity<Object> handleRuntimeException(InvalidFormatException ex, WebRequest req) {
+//		ExceptionDto exDto = exceptionFacade.writeErrorCode(ex, req);
+//		return handleExceptionInternal(ex, exDto.getBody(), new HttpHeaders(), exDto.getStatus(), req);
+//		// (例外,レスポンスボディ,レスポンスヘッダー,レスポンスステータス,リクエスト)
+//	}
 }

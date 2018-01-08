@@ -5,17 +5,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.WebRequest;
 
 import jp.erostagramu.api.dto.ExceptionDto;
-import jp.erostagramu.api.exception.ErrorCodeWrite;
+import jp.erostagramu.api.exception.ErrorCodeWriter;
 
 @Service
 public class ExceptionFacadeImpl implements ExceptionFacade {
 
 	@Autowired
-	ErrorCodeWrite errorCodeWrite;
+	ErrorCodeWriter errorCodeWriter;
 
 	@Override
 	public ExceptionDto writeErrorCode(Exception ex, WebRequest req) {
-		return writeErrorCode(ex, req);
+		return errorCodeWriter.writeErrorCode(ex, req);
 	}
 
 }

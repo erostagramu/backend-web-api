@@ -9,7 +9,7 @@ import jp.erostagramu.api.dao.masterdb.dto.ResultDto;
 import jp.erostagramu.api.dto.ExceptionDto;
 
 @Service
-public class ErrorCodeWriteImpl implements ErrorCodeWrite {
+public class ErrorCodeWriterImpl implements ErrorCodeWriter {
 
 	@Autowired
 	private ExceptionDto exceptionDto;
@@ -20,11 +20,11 @@ public class ErrorCodeWriteImpl implements ErrorCodeWrite {
 	@Override
 	public ExceptionDto writeErrorCode(Exception ex, WebRequest req) {
 		switch (ex.getClass().toString()) {
-		case "java.sql.SQLIntegrityConstraintViolationException":
+		case "class java.sql.SQLIntegrityConstraintViolationException":
 			errorMessage = "[重複する動画ID]または[存在しないカテゴリID・連携元動画種別ID]が指定されました";
 			status = HttpStatus.CONFLICT;
 			break;
-		case "com.fasterxml.jackson.databind.exc.InvalidFormatException":
+		case "class com.fasterxml.jackson.databind.exc.InvalidFormatException":
 			errorMessage = "JSONのデータ型が間違っています";
 			status = HttpStatus.BAD_REQUEST;
 			break;
