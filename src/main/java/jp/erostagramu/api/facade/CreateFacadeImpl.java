@@ -8,7 +8,7 @@ import jp.erostagramu.api.dao.masterdb.dto.ResultDto;
 import jp.erostagramu.api.dao.masterdb.write.CreateDao;
 
 @Service
-public class CreateFecadeImpl implements CreateFecade{
+public class CreateFacadeImpl implements CreateFacade{
 	
 	@Autowired
 	private CreateDao createDao;
