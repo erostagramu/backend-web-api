@@ -28,7 +28,7 @@ public class CreateDaoImpl implements CreateDao{
 	
 	@Override
 	public ResultDto create(MovieDto movieDto) {
-		Integer insertCnt = session.insert("jp.erostagramu.api.mapper.ApiMapper.create", movieDto);
+		Integer insertCnt = session.insert("ApiMapper.create", movieDto);
 		session.commit();
 		if (insertCnt != 1) {
 			return ResultDto.builder().message("動画の作成に失敗しました").build();
