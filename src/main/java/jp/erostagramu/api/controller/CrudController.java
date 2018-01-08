@@ -27,16 +27,6 @@ import jp.erostagramu.api.facade.CreateFecade;
 @RequestMapping(value = "api/v1/movie")
 public class CrudController extends ResponseEntityExceptionHandler {
 
-//	private InputStream inputStream;
-//	private SqlSessionFactory sqlSessionFactory;
-//	private SqlSession session;
-//
-//	public CrudController() throws IOException {
-//		inputStream = Resources.getResourceAsStream("mybatis-config.xml");
-//		sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-//		session = sqlSessionFactory.openSession();
-//	}
-	
 	@Autowired
 	private CreateFecade createFecade;
 
@@ -45,13 +35,6 @@ public class CrudController extends ResponseEntityExceptionHandler {
 	public ResultDto create(@RequestBody MovieDto movieDto) {
 		return createFecade.create(movieDto);
 	}
-
-//	// 一時的な動作確認用です。IDからTitleを検索して表示します。
-//	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-//	public String readTitleById(@PathVariable Integer id) throws IOException {
-//		MovieDto dto = session.selectOne("jp.erostagramu.api.mapper.ApiMapper.readTitleById", id);
-//		return dto.getTitle();
-//	}
 
 	// 主キー重複または外部キー違反が発生した時のレスポンス
 	@ExceptionHandler
