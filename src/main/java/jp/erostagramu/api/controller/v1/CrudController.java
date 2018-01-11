@@ -1,4 +1,4 @@
-package jp.erostagramu.api.controller;
+package jp.erostagramu.api.controller.v1;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 
@@ -19,8 +19,8 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jp.erostagramu.api.dao.masterdb.dto.MovieDto;
 import jp.erostagramu.api.dao.masterdb.dto.ResultDto;
 import jp.erostagramu.api.dto.ExceptionDto;
-import jp.erostagramu.api.facade.CreateFacade;
-import jp.erostagramu.api.facade.ExceptionFacade;
+import jp.erostagramu.api.facade.v1.exception.ErrorResponseFacade;
+import jp.erostagramu.api.facade.v1.write.CreateFacade;
 
 @Transactional(timeout = 15)
 @RestController
@@ -31,7 +31,7 @@ public class CrudController extends ResponseEntityExceptionHandler {
 	private CreateFacade createFacade;
 
 	@Autowired
-	private ExceptionFacade exceptionFacade;
+	private ErrorResponseFacade exceptionFacade;
 
 	// 動画登録API
 	@RequestMapping(value = "/", method = RequestMethod.POST)

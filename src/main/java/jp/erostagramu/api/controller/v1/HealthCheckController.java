@@ -1,4 +1,4 @@
-package jp.erostagramu.api.controller;
+package jp.erostagramu.api.controller.v1;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;

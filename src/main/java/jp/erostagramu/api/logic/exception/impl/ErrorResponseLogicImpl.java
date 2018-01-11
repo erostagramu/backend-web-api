@@ -1,4 +1,4 @@
-package jp.erostagramu.api.exception;
+package jp.erostagramu.api.logic.exception.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -7,9 +7,10 @@ import org.springframework.web.context.request.WebRequest;
 
 import jp.erostagramu.api.dao.masterdb.dto.ResultDto;
 import jp.erostagramu.api.dto.ExceptionDto;
+import jp.erostagramu.api.logic.exception.ErrorResponseLogic;
 
 @Service
-public class ErrorCodeWriterImpl implements ErrorCodeWriter {
+public class ErrorResponseLogicImpl implements ErrorResponseLogic {
 
 	@Autowired
 	private ExceptionDto exceptionDto;
