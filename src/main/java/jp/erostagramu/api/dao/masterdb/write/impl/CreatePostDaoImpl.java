@@ -10,13 +10,13 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import jp.erostagramu.api.dao.masterdb.write.CreateDao;
+import jp.erostagramu.api.dao.masterdb.write.CreatePostDao;
 import jp.erostagramu.api.facade.v1.write.model.CreatePostFacadeRequest;
 import jp.erostagramu.api.facade.v1.write.model.CreatePostFacadeResponse;
 import jp.erostagramu.api.facade.v1.write.model.CreatePostResponse;
 
 @Service
-public class CreateDaoImpl implements CreateDao {
+public class CreatePostDaoImpl implements CreatePostDao {
 
 	private InputStream inputStream;
 	private SqlSessionFactory sqlSessionFactory;
@@ -26,7 +26,7 @@ public class CreateDaoImpl implements CreateDao {
 	private HttpStatus status;
 	private CreatePostResponse createPostResponse;
 
-	public CreateDaoImpl() throws IOException {
+	public CreatePostDaoImpl() throws IOException {
 		inputStream = Resources.getResourceAsStream("mybatis-config.xml");
 		sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
 		session = sqlSessionFactory.openSession();
