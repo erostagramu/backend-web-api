@@ -9,11 +9,13 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import jp.erostagramu.api.dao.masterdb.dto.ResultDto;
 import jp.erostagramu.api.dao.masterdb.write.CreatePostDao;
 import jp.erostagramu.api.facade.v1.write.model.CreatePostFacadeRequest;
-import jp.erostagramu.api.facade.v1.write.model.CreatePostFacadeResponse;
-import jp.erostagramu.api.facade.v1.write.model.CreatePostResponse;
 
 @Service
 public class CreatePostDaoImpl implements CreatePostDao {
@@ -24,7 +26,6 @@ public class CreatePostDaoImpl implements CreatePostDao {
 
 	private String message;
 	private HttpStatus status;
-	private CreatePostResponse createPostResponse;
 
 	public CreatePostDaoImpl() throws IOException {
 		inputStream = Resources.getResourceAsStream("mybatis-config.xml");
@@ -33,22 +34,22 @@ public class CreatePostDaoImpl implements CreatePostDao {
 	}
 
 	@Override
-	public CreatePostFacadeResponse create(CreatePostFacadeRequest createPostFacadeRequest) {
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Throwable.class, timeout = 15)
+	public ResultDto create(CreatePostFacadeRequest createPostFacadeRequest) {
 		try {
 			session.insert("ApiMapper.create", createPostFacadeRequest.getRequestBody());
 			session.commit();
-			createPostResponse = null;
 			status = HttpStatus.OK;
 		} catch (org.apache.ibatis.exceptions.PersistenceException e) {
 			message = "[重複する動画ID]または[存在しないカテゴリID・連携元動画種別ID]が指定されました";
-			createPostResponse = CreatePostResponse.builder().message(message).build();
 			status = HttpStatus.CONFLICT;
 		}
-
-		return CreatePostFacadeResponse.builder().
-				challengeFreeOutlineResponse(createPostResponse). // body
-				status(status). // status
+		
+		return ResultDto.builder().
+				statusCode(status).
+				message(message).
 				build();
+
 	}
 
 }

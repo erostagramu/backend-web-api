@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class CreatePostResponse {
 	
-	private Integer errorKey;
+	private String errorKey;
 	private String message;
 	
 }
