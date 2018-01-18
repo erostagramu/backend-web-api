@@ -21,9 +21,9 @@ public class LogicCreateImpl implements LogicCreate {
 		ResultDto result = createDao.create(createPostFacadeRequest);
 		
 		CreatePostResponse createPostResponse = CreatePostResponse.builder().
-												errorKey(result.getErrorKey()).
-												message(result.getMessage()).
-												build();
+				errorKey(result.getErrorKey()).
+				message(result.getMessage()).
+				build();
 		
 		return CreatePostFacadeResponse.builder().
 				challengeFreeOutlineResponse(createPostResponse).
