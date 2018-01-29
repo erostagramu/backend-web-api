@@ -1,7 +1,8 @@
-package jp.erostagramu.api.facade.v1.write.model;
+package jp.erostagramu.api.facade.v1.crud.model;
 
 import org.springframework.http.HttpStatus;
 
+import jp.erostagramu.api.dao.masterdb.dto.ResultDto;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,7 +10,7 @@ import lombok.Data;
 @Data
 public class CreatePostFacadeResponse {
 	
-	private CreatePostResponse challengeFreeOutlineResponse;
+	private ResultDto responseBody;
 	private HttpStatus status;
 	
 }

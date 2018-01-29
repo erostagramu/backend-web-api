@@ -10,10 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import jp.erostagramu.api.dao.masterdb.dto.MovieDto;
-import jp.erostagramu.api.facade.v1.write.CreatePostFacade;
-import jp.erostagramu.api.facade.v1.write.model.CreatePostFacadeRequest;
-import jp.erostagramu.api.facade.v1.write.model.CreatePostFacadeResponse;
-import jp.erostagramu.api.facade.v1.write.model.CreatePostResponse;
+import jp.erostagramu.api.dao.masterdb.dto.ResultDto;
+import jp.erostagramu.api.facade.v1.crud.CrudFacade;
+import jp.erostagramu.api.facade.v1.crud.model.CreatePostFacadeRequest;
+import jp.erostagramu.api.facade.v1.crud.model.CreatePostFacadeResponse;
+
 
 @Transactional(timeout = 15)
 @RestController
@@ -21,17 +22,18 @@ import jp.erostagramu.api.facade.v1.write.model.CreatePostResponse;
 public class CrudController extends ResponseEntityExceptionHandler {
 
 	@Autowired
-	private CreatePostFacade createPostFacade;
+	private CrudFacade crudFacade;
 
 	// 動画登録API
 	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public ResponseEntity<CreatePostResponse> create(@RequestBody MovieDto movieDto) {
-		CreatePostFacadeRequest createPostFacadeRequest = CreatePostFacadeRequest.builder().requestBody(movieDto).build();
-		CreatePostFacadeResponse createPostFacadeResponse = createPostFacade.createPost(createPostFacadeRequest);
+	public ResponseEntity<ResultDto> create(@RequestBody MovieDto requestBody) {
+		
+		CreatePostFacadeRequest request = CreatePostFacadeRequest.builder().requestBody(requestBody).build();
+		CreatePostFacadeResponse response = crudFacade.createPost(request);
 
-		return new ResponseEntity<CreatePostResponse>(
-				createPostFacadeResponse.getChallengeFreeOutlineResponse(), //body
-				createPostFacadeResponse.getStatus()); //status
+		return new ResponseEntity<ResultDto>(
+				response.getResponseBody(), //body
+				response.getStatus()); //status
 	}
 
 }
