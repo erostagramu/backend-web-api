@@ -1,7 +1,6 @@
 package jp.erostagramu.api.logic.v1.create.impl;
 
-import java.util.Optional;
-
+import org.apache.ibatis.exceptions.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,27 +16,28 @@ public class CreateLogicImpl implements CreateLogic {
 
 	@Autowired
 	private CreatePostDao createDao;
-	private Integer insertCount;
 	private ResultDto result;
 	private HttpStatus status;
 	private String message;
-	
+
 	@Override
 	public CreatePostFacadeResponse create(CreatePostFacadeRequest createPostFacadeRequest) {
 
-		insertCount = createDao.create(createPostFacadeRequest);
-		
-		// nullの場合、0を設定する
-		insertCount = Optional.ofNullable(insertCount).orElse(0);
-		
-		if (insertCount == 1) {
+		try {
+			createDao.create(createPostFacadeRequest);
 			message = "成功";
 			status = HttpStatus.OK;
-		} else if (insertCount == 0) {
+
+		} catch (PersistenceException e) {
 			message = "'id'または'categoryId'が重複しています";
 			status = HttpStatus.CONFLICT;
+			
+		} catch (Exception e) {
+			message = "不明なエラー";
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			e.printStackTrace();
 		}
-		
+
 		result = ResultDto.builder().message(message).build();
 		return CreatePostFacadeResponse.builder().responseBody(result).status(status).build();
 

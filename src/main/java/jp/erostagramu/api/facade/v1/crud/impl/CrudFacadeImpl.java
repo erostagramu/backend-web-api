@@ -13,8 +13,8 @@ import jp.erostagramu.api.logic.v1.create.CreateLogic;
 
 @Service
 @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, rollbackFor = Throwable.class, timeout = 15)
-public class CrudFacadeImpl implements CrudFacade{
-	
+public class CrudFacadeImpl implements CrudFacade {
+
 	@Autowired
 	private CreateLogic createLogic;
 

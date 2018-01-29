@@ -15,7 +15,6 @@ import jp.erostagramu.api.facade.v1.crud.CrudFacade;
 import jp.erostagramu.api.facade.v1.crud.model.CreatePostFacadeRequest;
 import jp.erostagramu.api.facade.v1.crud.model.CreatePostFacadeResponse;
 
-
 @Transactional(timeout = 15)
 @RestController
 @RequestMapping(value = "api/v1/movie")
@@ -27,13 +26,13 @@ public class CrudController extends ResponseEntityExceptionHandler {
 	// 動画登録API
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	public ResponseEntity<ResultDto> create(@RequestBody MovieDto requestBody) {
-		
+
 		CreatePostFacadeRequest request = CreatePostFacadeRequest.builder().requestBody(requestBody).build();
 		CreatePostFacadeResponse response = crudFacade.createPost(request);
 
 		return new ResponseEntity<ResultDto>(
-				response.getResponseBody(), //body
-				response.getStatus()); //status
+				response.getResponseBody(), // body
+				response.getStatus()); // status
 	}
 
 }
