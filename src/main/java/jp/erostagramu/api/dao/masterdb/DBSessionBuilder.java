@@ -13,12 +13,10 @@ import org.springframework.stereotype.Service;
 public class DBSessionBuilder {
 	
 	private static final String CONFIG = "mybatis-config.xml";
-	private InputStream inputStream;
-	private SqlSessionFactory sqlSessionFactory;
 	
 	public SqlSession getSession() throws IOException {
-		inputStream = Resources.getResourceAsStream(CONFIG);
-		sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+		InputStream inputStream = Resources.getResourceAsStream(CONFIG);
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
 		return sqlSessionFactory.openSession();
 	}
 	
