@@ -14,7 +14,11 @@
         http://www.springframework.org/schema/aop/spring-aop.xsd
         ">
 
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="jp.erostagramu.api.mapper" />
+	</bean>
+	
 	<context:annotation-config />
-	<context:component-scan base-package="jp.erostagramu.api.*"/>
+	<context:component-scan base-package="jp.erostagramu.api.*" />
 
 </beans>

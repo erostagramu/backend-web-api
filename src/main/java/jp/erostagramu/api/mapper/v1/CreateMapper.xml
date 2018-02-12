@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="ApiMapper">
+<mapper namespace="jp.erostagramu.api.mapper.v1.CreateMapper">
 	<resultMap id="movieResult" type="jp.erostagramu.api.dao.masterdb.dto.MovieDto">
 		<result column="id" property="id" />
 		<result column="no" property="no" />
@@ -17,7 +17,7 @@
 		<result column="sys_update_date" property="sysUpdateDate" />
 	</resultMap>
 
-	<insert id="create" parameterType="jp.erostagramu.api.dao.masterdb.dto.MovieDto"
+	<insert id="insert" parameterType="jp.erostagramu.api.dao.masterdb.dto.MovieDto"
 		useGeneratedKeys="true" keyProperty="no">
 		insert into i_movies
 		(id,thumbnail_url,title,category_id_01,category_id_02,category_id_03,category_id_04,category_id_05,resource_id)
@@ -25,7 +25,7 @@
 		(#{id},#{thumbnailUrl},#{title},#{categoryId01},#{categoryId02},#{categoryId03},#{categoryId04},#{categoryId05},#{resourceId})
 	</insert>
 
-	<select id="readTitleById" resultMap="movieResult" parameterType="Integer">
+	<select id="getTitleById" resultMap="movieResult" parameterType="Integer">
 		select title
 		from i_movies
 		where id = #{id}
