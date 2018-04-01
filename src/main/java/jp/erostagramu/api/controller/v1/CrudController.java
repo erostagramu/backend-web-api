@@ -11,9 +11,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import jp.erostagramu.api.dao.masterdb.dto.MovieDto;
 import jp.erostagramu.api.dao.masterdb.dto.ResultDto;
+import jp.erostagramu.api.dao.masterdb.dto.UpdateDto;
 import jp.erostagramu.api.facade.v1.crud.CrudFacade;
 import jp.erostagramu.api.facade.v1.crud.model.CreatePostFacadeRequest;
-import jp.erostagramu.api.facade.v1.crud.model.CreatePostFacadeResponse;
+import jp.erostagramu.api.facade.v1.crud.model.FacadeResponse;
+import jp.erostagramu.api.facade.v1.crud.model.UpdatePutFacadeRequest;
 
 @Transactional(timeout = 15)
 @RestController
@@ -28,11 +30,25 @@ public class CrudController extends ResponseEntityExceptionHandler {
 	public ResponseEntity<ResultDto> create(@RequestBody MovieDto requestBody) {
 
 		CreatePostFacadeRequest request = CreatePostFacadeRequest.builder().requestBody(requestBody).build();
-		CreatePostFacadeResponse response = crudFacade.createPost(request);
+		System.out.println(requestBody.toString());
+		FacadeResponse response = crudFacade.createPost(request);
 
 		return new ResponseEntity<ResultDto>(
 				response.getResponseBody(), // body
 				response.getStatus()); // status
 	}
-
+	
+	// 動画更新API
+	@RequestMapping(value="/",method = RequestMethod.PUT)
+	public ResponseEntity<ResultDto> create(@RequestBody UpdateDto requestBody){
+		
+		UpdatePutFacadeRequest request = UpdatePutFacadeRequest.builder().requestBody(requestBody).build();
+		System.out.println(requestBody.toString());
+		FacadeResponse response = crudFacade.updatePut(request);
+		
+		return new ResponseEntity<ResultDto>(
+				response.getResponseBody(),
+				response.getStatus());
+	}
+	
 }

@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class CreatePostFacadeResponse {
+public class FacadeResponse {
 	
 	private ResultDto responseBody;
 	private HttpStatus status;

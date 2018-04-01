@@ -10,7 +10,7 @@ import jp.erostagramu.api.constants.MessageConstants;
 import jp.erostagramu.api.dao.masterdb.dto.ResultDto;
 import jp.erostagramu.api.dao.masterdb.write.CreatePostDao;
 import jp.erostagramu.api.facade.v1.crud.model.CreatePostFacadeRequest;
-import jp.erostagramu.api.facade.v1.crud.model.CreatePostFacadeResponse;
+import jp.erostagramu.api.facade.v1.crud.model.FacadeResponse;
 import jp.erostagramu.api.logic.v1.create.CreateLogic;
 
 @Service
@@ -23,7 +23,7 @@ public class CreateLogicImpl implements CreateLogic {
 	private HttpStatus status;
 
 	@Override
-	public CreatePostFacadeResponse create(CreatePostFacadeRequest createPostFacadeRequest) {
+	public FacadeResponse create(CreatePostFacadeRequest createPostFacadeRequest) {
 
 		try {
 			createDao.create(createPostFacadeRequest);
@@ -50,7 +50,7 @@ public class CreateLogicImpl implements CreateLogic {
 		}
 
 		result = ResultDto.builder().message(message).build();
-		return CreatePostFacadeResponse.builder().responseBody(result).status(status).build();
+		return FacadeResponse.builder().responseBody(result).status(status).build();
 
 	}
 
