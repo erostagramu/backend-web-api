@@ -8,6 +8,7 @@ public class MessageConstants {
 	// エラー時のメッセージ
 	public static final String ID_DUPLICATION = "[id]が重複しています";
 	public static final String CATEGORY_ID_INTEGRITY = "存在しない[categoryId]を指定しています";
+	public static final String MOVIE_ID_INTEGRITY = "存在しない[MovieId]を指定しています";
 	public static final String OTHER = "不明なエラー";
 	
 }

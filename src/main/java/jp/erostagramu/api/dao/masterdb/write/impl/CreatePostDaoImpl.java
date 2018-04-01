@@ -12,7 +12,8 @@ public class CreatePostDaoImpl implements CreatePostDao {
 
 	@Autowired
 	private CrudMapper mapper;
-
+	
+	@Override
 	public void create(CreatePostFacadeRequest createPostFacadeRequest) throws Exception {
 		mapper.insert(createPostFacadeRequest.getRequestBody());
 	}

@@ -27,6 +27,7 @@ public class CrudFacadeImpl implements CrudFacade {
 		return createLogic.create(createPostFacadeRequest);
 	}
 	
+	@Override
 	public FacadeResponse updatePut(UpdatePutFacadeRequest updatePutFacadeRequest) {
 		return updateLogic.update(updatePutFacadeRequest);
 	}

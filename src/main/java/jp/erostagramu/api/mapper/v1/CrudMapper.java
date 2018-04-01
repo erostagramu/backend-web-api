@@ -10,5 +10,7 @@ public interface CrudMapper {
 	
 	void insert(MovieDto insertDto);
 	void update(UpdateDto updateDto);
+	MovieDto GetTitleById(Integer id);
+	Integer getCountById(Integer id);
 	
 }

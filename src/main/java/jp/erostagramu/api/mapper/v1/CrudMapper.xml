@@ -34,8 +34,15 @@
 	</update>
 	
 	<select id="getTitleById" resultMap="movieResult" parameterType="Integer">
-		select title
-		from i_movies
-		where id = #{id}
+		SELECT title
+		FROM i_movies
+		WHERE id = #{id}
 	</select>
+	
+	<select id="getCountById" resultType="Integer" parameterType="Integer">
+		SELECT count(*)
+		FROM i_movies
+		WHERE id = #{id}
+	</select>
+	
 </mapper>

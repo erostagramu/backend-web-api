@@ -30,12 +30,11 @@ public class CrudController extends ResponseEntityExceptionHandler {
 	public ResponseEntity<ResultDto> create(@RequestBody MovieDto requestBody) {
 
 		CreatePostFacadeRequest request = CreatePostFacadeRequest.builder().requestBody(requestBody).build();
-		System.out.println(requestBody.toString());
 		FacadeResponse response = crudFacade.createPost(request);
 
 		return new ResponseEntity<ResultDto>(
-				response.getResponseBody(), // body
-				response.getStatus()); // status
+				response.getResponseBody(),
+				response.getStatus());
 	}
 	
 	// 動画更新API
@@ -43,7 +42,6 @@ public class CrudController extends ResponseEntityExceptionHandler {
 	public ResponseEntity<ResultDto> create(@RequestBody UpdateDto requestBody){
 		
 		UpdatePutFacadeRequest request = UpdatePutFacadeRequest.builder().requestBody(requestBody).build();
-		System.out.println(requestBody.toString());
 		FacadeResponse response = crudFacade.updatePut(request);
 		
 		return new ResponseEntity<ResultDto>(
