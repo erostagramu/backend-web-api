@@ -1,41 +1,48 @@
-package jp.erostagramu.api.logic.v1.create.impl;
+package jp.erostagramu.api.logic.v1.update.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import jp.erostagramu.api.constants.MessageConstants;
 import jp.erostagramu.api.dao.masterdb.dto.ResultDto;
-import jp.erostagramu.api.dao.masterdb.write.CreatePostDao;
-import jp.erostagramu.api.facade.v1.crud.model.CreatePostFacadeRequest;
+import jp.erostagramu.api.dao.masterdb.read.CountByIdGetDao;
+import jp.erostagramu.api.dao.masterdb.write.UpdatePutDao;
 import jp.erostagramu.api.facade.v1.crud.model.FacadeResponse;
-import jp.erostagramu.api.logic.v1.create.CreateLogic;
+import jp.erostagramu.api.facade.v1.crud.model.UpdatePutFacadeRequest;
+import jp.erostagramu.api.logic.v1.update.UpdateLogic;
 
 @Service
-public class CreateLogicImpl implements CreateLogic {
+public class UpdateLogicImpl implements UpdateLogic {
 
 	@Autowired
-	private CreatePostDao createDao;
+	private UpdatePutDao updateDao;
+	@Autowired
+	private CountByIdGetDao countDao;
 	private ResultDto result;
 	private String message;
 	private HttpStatus status;
 
 	@Override
-	public FacadeResponse create(CreatePostFacadeRequest createPostFacadeRequest) {
+	public FacadeResponse update(UpdatePutFacadeRequest updatePutFacadeRequest) {
 
 		try {
-			createDao.create(createPostFacadeRequest);
+			// 更新対象のデータが存在するかを確認
+			Integer count = countDao.countById(updatePutFacadeRequest.getRequestBody().getMovieId());
 
-			// リクエスト成功時
-			message = MessageConstants.SUCCESS;
-			status = HttpStatus.OK;
+			if (count == 1) {
+				updateDao.update(updatePutFacadeRequest);
 
-		} catch (DuplicateKeyException e) {
-			// 既に存在するIDを指定した時
-			message = MessageConstants.ID_DUPLICATION;
-			status = HttpStatus.CONFLICT;
+				// リクエスト成功時
+				message = MessageConstants.SUCCESS;
+				status = HttpStatus.OK;
+			
+			} else {
+				// 更新対象のデータが存在しなかった時
+				message = MessageConstants.MOVIE_ID_INTEGRITY;
+				status = HttpStatus.NOT_FOUND;
+			}
 
 		} catch (DataIntegrityViolationException e) {
 			// 存在しないcategoryIDを指定した時
@@ -51,7 +58,6 @@ public class CreateLogicImpl implements CreateLogic {
 
 		result = ResultDto.builder().message(message).build();
 		return FacadeResponse.builder().responseBody(result).status(status).build();
-
 	}
 
 }
